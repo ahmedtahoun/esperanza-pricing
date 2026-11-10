@@ -36,6 +36,11 @@ Real price sheets for every list (hotels, cruises, flights, train, guides, reps,
   - First load merges the old per-page keys `esperanza-pricing.v4.en` / `.v4.ar` (`mergeOld()`): files, custom list rows and transport rows from both; an unsaved program from the other page becomes a draft in Files. Old keys are left as a backup; `esperanza-pricing.migrated` stops Reset from re-importing them.
   - Display language is per page: `esperanza-pricing.lang.<en|ar>` (`pageLang()`).
   - A `storage` event listener reloads `S` when the other page/tab saves, so two open tabs don't overwrite each other.
+- UX helpers (Nov 2026):
+  - **Undo:** wrap any destructive edit of the program in `withUndo(message, fn)`; it snapshots `S.prog` and shows the bottom message with ↶ Undo for 7 s (`undoSnap`, `#snack`). Used for deleting a day, stay, transport line, child, and for replacing the program with a ready one.
+  - **Ready programs** ask first when the program already has days (`tplArm`: first tap shows "Tap again to replace…", resets after 5 s).
+  - **Opened day** is grouped: Visits & activities · Transport, guide & rep · Meals · Flight or train. Flight/train selects show only when set or after "+ Domestic flight / + Sleeper train" (`travelOpen`, not saved).
+  - **Phones (≤560px):** exchange rates collapse into the 💱 chip (`fxOpen`), tabs are a 4-column row, "English" shows as "EN", short sample-prices banner. **≤700px:** the step bar becomes "Step N of 6" + a tappable progress bar (`.steps-m`; desktop uses `.steps-full`).
 - Debug handle: `window.__app = {S, compute, calcTier, totals, RES}`.
 
 ## Testing

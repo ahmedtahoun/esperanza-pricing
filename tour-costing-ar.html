@@ -62,6 +62,25 @@ input[type="number"],input[type="date"]{direction:ltr}
 .sample{display:flex;gap:10px;align-items:center;background:var(--gold-soft);border-radius:10px;padding:8px 12px;font-size:12.5px;margin-bottom:10px;flex-wrap:wrap}
 .sample > span:nth-child(2){flex:1 1 260px}
 .sample b{color:var(--gold)}
+.s-short,.l-short{display:none}
+.fx-chip{display:none;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:12.5px}
+.tpl.arm{border-color:var(--warn);background:var(--warn-soft)}
+.snack{position:fixed;z-index:20;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:12px;background:var(--ink);color:var(--bg);border-radius:12px;padding:8px 8px 8px 14px;padding-inline:14px 8px;font-size:13px;box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:calc(100vw - 32px)}
+.snack[hidden]{display:none}
+.snack .btn{background:var(--bg);color:var(--ink);border-color:transparent;font-weight:600}
+@media (max-width:1119px){.snack{bottom:calc(76px + env(safe-area-inset-bottom,0px))}}
+@media (max-width:560px){
+  .top{gap:8px;padding-block:10px 8px}
+  .brand svg{width:26px;height:auto}.brand b{font-size:17px}.brand small{font-size:10px}
+  .fx-chip{display:inline-flex}
+  .fxbar{display:none;width:100%;order:5}.fxbar.open{display:flex}
+  .tabs{width:100%;order:6;display:grid;grid-template-columns:repeat(4,1fr);border-radius:12px}
+  .tabs a{display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 2px;border-radius:9px;font-size:11.5px}
+  .tabs a .emo{font-size:17px}
+  .s-short,.l-short{display:inline}.s-long,.l-long{display:none}
+  .brand{gap:7px}.top > .seg button{padding:5px 8px}
+  .fx-chip{gap:4px;padding:5px 8px;font-size:12px}
+  .sample{padding:6px 10px;flex-wrap:nowrap}.sample > span:nth-child(2){flex:1 1 auto}}
 
 /* controls */
 input,select,textarea{font:inherit;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:7px 9px;min-width:0}
@@ -107,13 +126,23 @@ button{font:inherit;cursor:pointer;color:inherit}
 .sect h3{margin:0;font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center}
 
 /* step bar */
-.stepbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;background:var(--bg);padding-block:6px 10px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
-.stepbar button{flex:1 0 auto;display:flex;align-items:center;gap:8px;padding:7px 11px;border-radius:11px;background:var(--surface);border:1px solid var(--line);text-align:start;min-width:0}
-.stepbar button:hover{border-color:var(--accent)}
-.stepbar button[aria-current="step"]{border-color:var(--accent);box-shadow:inset 0 -3px 0 var(--accent)}
-.stepbar .emo{font-size:18px}
-.stepbar b{display:block;font-size:12.5px;font-weight:600;white-space:nowrap}
-.stepbar small{display:block;font-size:11px;color:var(--muted);white-space:nowrap;max-width:9.5rem;overflow:hidden;text-overflow:ellipsis}
+.stepbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;background:var(--bg);padding-block:6px 10px}
+.steps-full{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.steps-m{display:none}
+@media (max-width:700px){.steps-full{display:none}
+  .steps-m{display:flex;flex-direction:column;gap:6px}
+  .sm-t{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}.sm-t b{font-size:14px}.sm-t small{font-size:12px;color:var(--muted)}
+  .sm-bar{display:flex;gap:4px}
+  .sm-bar button{flex:1;border:0;background:transparent;padding:8px 0;display:block}
+  .sm-bar i{display:block;height:6px;border-radius:3px;background:var(--line)}
+  .sm-bar button.done i{background:color-mix(in srgb,var(--accent) 45%,var(--line))}
+  .sm-bar button[aria-current="step"] i{background:var(--accent)}}
+.steps-full button{flex:1 0 auto;display:flex;align-items:center;gap:8px;padding:7px 11px;border-radius:11px;background:var(--surface);border:1px solid var(--line);text-align:start;min-width:0}
+.steps-full button:hover{border-color:var(--accent)}
+.steps-full button[aria-current="step"]{border-color:var(--accent);box-shadow:inset 0 -3px 0 var(--accent)}
+.steps-full .emo{font-size:18px}
+.steps-full b{display:block;font-size:12.5px;font-weight:600;white-space:nowrap}
+.steps-full small{display:block;font-size:11px;color:var(--muted);white-space:nowrap;max-width:9.5rem;overflow:hidden;text-overflow:ellipsis}
 .stepbar .ck{margin-inline-start:auto;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;border:1.5px solid var(--line);color:transparent;flex:none}
 .stepbar button.done .ck{background:var(--ok);border-color:var(--ok);color:var(--surface)}
 
@@ -149,6 +178,7 @@ button{font:inherit;cursor:pointer;color:inherit}
 /* calendar */
 .tripbar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 16px;padding:12px 14px;margin-bottom:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
 .tripbar .field{flex:0 1 12rem}
+.tripbar .field:first-child{flex:1 1 9rem;max-width:14rem}.tripbar .field:nth-child(2){flex:0 0 auto}
 .trip-sum{flex:1 1 14rem;display:flex;flex-direction:column;gap:2px;font-size:13px;padding-bottom:4px}
 .trip-sum b{font-size:14px}
 .trip-sum .peak{align-self:flex-start}
@@ -166,8 +196,11 @@ button{font:inherit;cursor:pointer;color:inherit}
 .day-t .d{font-size:12px;color:var(--muted)}
 .day-acts{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
 .day-sum{display:flex;flex-wrap:wrap;gap:5px;padding-block:0 10px;padding-inline:66px 12px}
-.day-ed{border-top:1px solid var(--line);padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;background:var(--surface-2)}
-.day-ed .full{grid-column:1/-1}
+.day-ed{border-top:1px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:12px;background:var(--surface-2)}
+.dgrp{display:flex;flex-direction:column;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
+.dgrp h4{margin:0;font-size:13px;font-weight:600}
+.g2{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.day-ed > .g2.dgrp{display:grid}
 .trl{display:flex;flex-direction:column;gap:6px}
 .tr-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:12.5px}
 .tr-row .n{flex:1 1 180px;min-width:0}
@@ -718,13 +751,15 @@ function renderShell(){
   $('#app').innerHTML=`
   <header class="top">
     <div class="brand">${PYR(34)}<div><b>Esperanza</b><small>${T('PROGRAM PRICING','تسعير البرامج')}</small></div></div>
-    <div class="fxbar" role="group" aria-label="${T('Exchange rates','أسعار العملات')}"><span class="emo">💱</span>
+    <button class="fx-chip" type="button" data-act="fx-toggle" aria-expanded="${fxOpen}" aria-controls="fxbar" id="fx-chip">${fxChipTxt()}</button>
+    <div class="fxbar${fxOpen?' open':''}" id="fxbar" role="group" aria-label="${T('Exchange rates','أسعار العملات')}"><span class="emo">💱</span>
       ${['USD','EUR'].map(c=>`<label for="fx-${c}"><span class="emo">${FLAG[c]}</span>1 ${c} =<input id="fx-${c}" data-fx="${c}" type="number" min="0.01" step="0.01" value="${esc(S.fx[c])}">${curN('EGP')}</label>`).join('')}</div>
-    <div class="seg" role="group" aria-label="Language / اللغة"><button type="button" data-act="lang" data-v="en" aria-pressed="${!ar}">English</button><button type="button" data-act="lang" data-v="ar" aria-pressed="${ar}">عربي</button></div>
+    <div class="seg" role="group" aria-label="Language / اللغة"><button type="button" data-act="lang" data-v="en" aria-pressed="${!ar}"><span class="l-long">English</span><span class="l-short" aria-label="English">EN</span></button><button type="button" data-act="lang" data-v="ar" aria-pressed="${ar}">عربي</button></div>
     <nav class="tabs">${[['program','🧮',T('Program','البرنامج')],['files','📁',T('Files','الملفات')],['lists','📋',T('Price lists','قوائم الأسعار')],['settings','⚙️',T('Settings','الإعدادات')]].map(([k,e,n])=>`<a href="#${k}"><span class="emo">${e}</span> ${n}</a>`).join('')}</nav>
   </header>
-  ${S.ui.sample?`<div class="sample"><span class="emo">🏷️</span><span><b>${T('Sample prices','أسعار تجريبية')}</b> — ${T('only the transport sheet, three tickets and the lunch come from Reem’s papers. Hotels, cruises, flights and the rest are placeholders until the real price sheets arrive.','فقط بيان النقل وثلاث تذاكر والغداء من ورق ريم. الفنادق والكروز والطيران والباقي أرقام مؤقتة لحين وصول شيتات الأسعار الحقيقية.')}</span><button class="btn small ghost" type="button" data-act="hide-sample">${T('Got it','تمام')}</button></div>`:''}
-  <main id="view"></main>`;
+  ${S.ui.sample?`<div class="sample"><span class="emo">🏷️</span><span><b>${T('Sample prices','أسعار تجريبية')}</b><span class="s-short"> — ${T('most prices are placeholders.','أغلب الأسعار مؤقتة.')}</span><span class="s-long"> — ${T('only the transport sheet, three tickets and the lunch come from Reem’s papers. Hotels, cruises, flights and the rest are placeholders until the real price sheets arrive.','فقط بيان النقل وثلاث تذاكر والغداء من ورق ريم. الفنادق والكروز والطيران والباقي أرقام مؤقتة لحين وصول شيتات الأسعار الحقيقية.')}</span></span><button class="btn small ghost" type="button" data-act="hide-sample">${T('Got it','تمام')}</button></div>`:''}
+  <main id="view"></main>
+  <div class="snack" id="snack" role="status" aria-live="polite"${undoSnap?'':' hidden'}>${snackHtml()}</div>`;
   renderView();
 }
 function renderView(){const v=viewName(); document.querySelectorAll('.tabs a').forEach(a=>{if(a.getAttribute('href')==='#'+v) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');});
@@ -743,7 +778,10 @@ function stepSum(i){const p=P(), m=RES&&RES.main;
 p.stays.reduce((a,s)=>a+num(s.nights),0)+' '+T('nights','ليالي'),T('Built automatically','تلقائي'),p.saved?({quote:T('Quote','عرض سعر'),confirmed:T('Confirmed','مؤكد'),cancelled:T('Cancelled','ملغي')})[p.status]:T('Not saved','غير محفوظ')][i];}
 function renderStepbar(){
   const el=$('#stepbar'); if(!el) return;
-  el.innerHTML=STEPS.map((s,i)=>`<button type="button" data-act="step" data-v="${i+1}" class="${stepDone(i)?'done':''}"${S.ui.step===i+1?' aria-current="step"':''}><span class="emo">${s[0]}</span><span><b>${i+1}. ${T(s[1],s[2])}</b><small>${esc(stepSum(i))}</small></span><span class="ck">✓</span></button>`).join('');
+  const c=S.ui.step, cs=STEPS[c-1];
+  el.innerHTML=`<div class="steps-full">${STEPS.map((s,i)=>`<button type="button" data-act="step" data-v="${i+1}" class="${stepDone(i)?'done':''}"${c===i+1?' aria-current="step"':''}><span class="emo">${s[0]}</span><span><b>${i+1}. ${T(s[1],s[2])}</b><small>${esc(stepSum(i))}</small></span><span class="ck">✓</span></button>`).join('')}</div>
+    <div class="steps-m"><div class="sm-t"><span class="emo">${cs[0]}</span><b>${T(`Step ${c} of ${STEPS.length}`,`خطوة ${c} من ${STEPS.length}`)} · ${T(cs[1],cs[2])}</b><small>${esc(stepSum(c-1))}</small></div>
+    <div class="sm-bar">${STEPS.map((s,i)=>`<button type="button" data-act="step" data-v="${i+1}" class="${stepDone(i)?'done':''}"${c===i+1?' aria-current="step"':''} aria-label="${i+1}. ${esc(T(s[1],s[2]))}"><i></i></button>`).join('')}</div></div>`;
 }
 function head(i,txt){const s=STEPS[i-1];return `<div class="step-head"><span class="s-ico"><span class="emo">${s[0]}</span></span><div><h2>${i}. ${T(s[1],s[2])}</h2><p>${txt}</p></div></div>`;}
 function nav(i){return `<div class="step-nav">${i>1?`<button class="btn" type="button" data-act="step" data-v="${i-1}">${T('← Back','→ السابق')}</button>`:'<span></span>'}${i<STEPS.length?`<button class="btn primary" type="button" data-act="step" data-v="${i+1}">${T('Next: ','التالي: ')}${T(STEPS[i][1],STEPS[i][2])} ${T('→','←')}</button>`:''}</div>`;}
@@ -761,12 +799,14 @@ function tripSummary(){
   return `<b>${fmtD(dayDate(0),yr)} → ${fmtD(dayDate(n-1),yr)}</b><span>${n} ${T('days','أيام')} · ${Math.max(0,n-1)} ${T('nights','ليالي')}</span>`+
     (pk?`<span class="peak">🔥 ${pk===n?T('High season','موسم ذروة'):T(`${pk} of ${n} days in high season`,`${pk} من ${n} أيام في موسم الذروة`)}${seas?' · '+seas:''}</span>`:`<span class="muted">${T('No high-season days','لا توجد أيام ذروة')}</span>`);
 }
+function tplBtn(id,ico,name,desc){const arm=tplArm===id, n=P().days.length;
+  return `<button class="tpl${arm?' arm':''}" type="button" data-act="tpl" data-v="${id}">${ico}<b>${name}</b><span>${arm?'⚠️ '+T(`Tap again to replace the ${n} days`,`اضغط تاني لاستبدال الـ ${n} أيام`):desc}</span></button>`;}
 function renderStep(){
   const el=$('#step'); if(!el) return; const i=S.ui.step, p=P(); let h='';
   if(i===1){
     h=head(1,T('Who the program is for, and in which language and currency.','البرنامج لمين، وبأي لغة وعملة.'));
-    h+=`<div class="sect"><h3><span class="emo">⚡</span>${T('Start from a ready program','البدء من برنامج جاهز')}</h3><div class="tpls">${TEMPLATES.map(t=>`<button class="tpl" type="button" data-act="tpl" data-v="${t.id}">${icon(t.ico,24)}<b>${T(t.n[0],t.n[1])}</b><span>${T(t.d[0],t.d[1])}</span></button>`).join('')}<button class="tpl" type="button" data-act="tpl" data-v="blank"><span class="emo">📄</span><b>${T('Blank program','برنامج فاضي')}</b><span>${T('Build day by day','بناء يوم بيوم')}</span></button></div>
-      ${p.days.length?`<div class="help">${T('Choosing one replaces the days and stays of this program.','الاختيار يستبدل أيام وإقامة البرنامج الحالي.')}</div>`:''}</div>
+    h+=`<div class="sect"><h3><span class="emo">⚡</span>${T('Start from a ready program','البدء من برنامج جاهز')}</h3><div class="tpls">${TEMPLATES.map(t=>tplBtn(t.id,icon(t.ico,24),T(t.n[0],t.n[1]),T(t.d[0],t.d[1]))).join('')}${tplBtn('blank','<span class="emo">📄</span>',T('Blank program','برنامج فاضي'),T('Build day by day','بناء يوم بيوم'))}</div>
+      ${p.days.length?`<div class="help">${T('Choosing one replaces the days and stays of this program — you can undo it.','الاختيار يستبدل أيام وإقامة البرنامج الحالي — وتقدر تتراجع.')}</div>`:''}</div>
     <div class="sect"><div class="grid">
       <div class="field"><label class="lbl" for="p-client">${T('Client or group name','اسم العميل أو المجموعة')}</label><input id="p-client" data-p="client" type="text" value="${esc(p.client)}"></div>
       <div class="field"><label class="lbl" for="p-agency">${T('Agency','الوكالة')}</label><input id="p-agency" data-p="agency" type="text" value="${esc(p.agency)}"></div>
@@ -857,20 +897,25 @@ function dayCard(d,j){
     const cityOpts=S.lists.opts.filter(r=>r.city===d.city||d.opts.includes(r.id));
     const g=guideFor(d.city);
     const rests=S.lists.rests.filter(r=>r.city===d.city||r.id===d.lunch||r.id===d.dinner);
+    const showF=!!d.flight||travelOpen.has(d.id+':flight'), showT=!!d.train||travelOpen.has(d.id+':train');
     ed=`<div class="day-ed">
-      <div class="field"><span class="lbl">📍 ${T('City','المدينة')}</span>${sel(`data-day="${d.id}:city"`,Object.keys(CITIES).map(c=>[c,cityN(c)]),d.city,T('City','المدينة'))}</div>
-      <div class="field"><label class="lbl" for="dt-${d.id}">✏️ ${T('Day title (optional)','عنوان اليوم (اختياري)')}</label><input id="dt-${d.id}" data-day="${d.id}:title" type="text" value="${esc(d.title)}" placeholder="${T('e.g. Arrival','مثال: الوصول')}"></div>
+      <div class="dgrp g2"><div class="field"><span class="lbl">📍 ${T('City','المدينة')}</span>${sel(`data-day="${d.id}:city"`,Object.keys(CITIES).map(c=>[c,cityN(c)]),d.city,T('City','المدينة'))}</div>
+      <div class="field"><label class="lbl" for="dt-${d.id}">✏️ ${T('Day title (optional)','عنوان اليوم (اختياري)')}</label><input id="dt-${d.id}" data-day="${d.id}:title" type="text" value="${esc(d.title)}" placeholder="${T('e.g. Arrival','مثال: الوصول')}"></div></div>
+      <div class="dgrp"><h4>🎟️ ${T('Visits & activities','المزارات والأنشطة')}</h4>
       <div class="field full"><span class="lbl">🎟️ ${T('Visits in','المزارات في')} ${esc(cityN(d.city))}</span><div class="chips">${cityTix.map(r=>`<button class="chip" type="button" data-act="day-tog" data-id="${d.id}" data-k="tix" data-v="${r.id}" aria-pressed="${d.tix.includes(r.id)}">${r.id==='t_pyr'?PYR(14):''}${esc(r.name)} <span class="p">${num(r.adult)?fmtIn(num(r.adult),r.cur,true):T('free','مجاني')}</span></button>`).join('')||`<span class="help">${T('No tickets for this city in the price list.','لا توجد تذاكر لهذه المدينة في قائمة الأسعار.')}</span>`}</div></div>
+      ${cityActs.length?`<div class="field full"><span class="lbl">⛵ ${T('Activities & boats','الأنشطة والمراكب')}</span><div class="chips">${cityActs.map(r=>`<button class="chip" type="button" data-act="day-tog" data-id="${d.id}" data-k="acts" data-v="${r.id}" aria-pressed="${d.acts.includes(r.id)}">${esc(r.name)} <span class="p">${fmtIn(num(r.price),r.cur,true)} ${r.unit==='boat'?T('/boat','/مركب'):T('/person','/فرد')}</span></button>`).join('')}</div></div>`:''}
+      ${cityOpts.length?`<div class="field full"><span class="lbl">⭐ ${T('Optional tours (offered, not in the price)','رحلات اختيارية (تُعرض، خارج السعر)')}</span><div class="chips">${cityOpts.map(r=>`<button class="chip" type="button" data-act="day-tog" data-id="${d.id}" data-k="opts" data-v="${r.id}" aria-pressed="${d.opts.includes(r.id)}">${esc(r.name)} <span class="p">${fmtIn(num(r.price),r.cur,true)}</span></button>`).join('')}</div></div>`:''}</div>
+      <div class="dgrp"><h4>🚌 ${T('Transport, guide & rep','النقل والمرشد والمندوب')}</h4>
       <div class="field full"><span class="lbl">🚌 ${T('Transport','النقل')}</span><div class="trl">${d.trans.map(t=>{const r=rateById(t.rate); if(!r) return ''; return `<div class="tr-row"><span class="n">${esc(isAr()?r.ar:r.en)}</span>${r.kind==='transfer'?segB('tr-ret',t.id,[['0',T('One way','ذهاب')],['1',T('Return ×2','ذهاب وعودة')]],t.ret?'1':'0',` data-day="${d.id}"`):`<span class="help">↩️ ${T('return incl.','شامل العودة')}</span>`}${sel(`data-trmode="${d.id}:${t.id}"`,[['auto',T('Auto vehicle','عربية تلقائي')],...VEH.map(v=>[v,vName(v)])],t.mode,T('Vehicle','العربية'))}<span class="v" id="tv-${t.id}"></span><button class="x" type="button" data-act="tr-del" data-id="${d.id}" data-v="${t.id}" aria-label="×">×</button></div>`;}).join('')}
         <select data-tradd="${d.id}" aria-label="${T('Add transport','إضافة نقل')}"><option value="">➕ ${T('Add transport…','إضافة نقل…')}</option>${Object.entries(TGROUPS).map(([g2,n])=>`<optgroup label="${esc(T(n[0],n[1]))}">${S.rates.filter(r=>r.g===g2).map(r=>`<option value="${r.id}">${esc(isAr()?r.ar:r.en)}</option>`).join('')}</optgroup>`).join('')}</select></div></div>
-      <div class="field"><span class="lbl">🧭 ${T('Guide','المرشد')} (${plangN(p.plang)})</span>${segB('day-set','guide',[['none',T('None','بدون')],['full',T('Full day','يوم كامل')],['half',T('Half day','نص يوم')]],d.guide,` data-id="${d.id}"`)}<span class="help" style="margin-top:4px">${g?`${fmtIn(num(g.full),g.cur,true)} / ${fmtIn(num(g.half),g.cur,true)}`:'⚠️ '+T('No price for this language and city','لا يوجد سعر لهذه اللغة والمدينة')}</span></div>
-      <div class="field"><span class="lbl">🧑‍💼 ${T('Rep','المندوب')}</span>${sel(`data-day="${d.id}:rep"`,S.lists.reps.map(r=>[r.id,`${cityN(r.city)} · ${optN('service',r.service)} · ${fmtIn(num(r.price),r.cur,true)}`]),d.rep,T('Rep','المندوب'),T('No rep','بدون مندوب'))}</div>
-      <div class="field"><span class="lbl">🍽️ ${T('Lunch','الغداء')}</span>${sel(`data-day="${d.id}:lunch"`,rests.filter(r=>num(r.lunch)>0).map(r=>[r.id,`${r.name} · ${fmtIn(num(r.lunch),r.cur,true)}`]),d.lunch,T('Lunch','الغداء'),T('No lunch','بدون غداء'))}</div>
-      <div class="field"><span class="lbl">🍲 ${T('Dinner','العشاء')}</span>${sel(`data-day="${d.id}:dinner"`,rests.filter(r=>num(r.dinner)>0).map(r=>[r.id,`${r.name} · ${fmtIn(num(r.dinner),r.cur,true)}`]),d.dinner,T('Dinner','العشاء'),T('No dinner','بدون عشاء'))}</div>
-      <div class="field"><span class="lbl">✈️ ${T('Domestic flight','طيران داخلي')}</span>${sel(`data-day="${d.id}:flight"`,S.lists.flights.map(r=>[r.id,`${r.from} → ${r.to} · ${fmtIn(num(r.price),r.cur,true)}`]),d.flight,T('Flight','الطيران'),T('No flight','بدون طيران'))}</div>
-      <div class="field"><span class="lbl">🚆 ${T('Sleeper train','قطار النوم')}</span>${sel(`data-day="${d.id}:train"`,S.lists.trains.map(r=>[r.id,`${r.from} → ${r.to} · ${fmtIn(num(r.dbl),r.cur,true)}`]),d.train,T('Train','القطار'),T('No train','بدون قطار'))}</div>
-      <div class="field full"><span class="lbl">⛵ ${T('Activities & boats','الأنشطة والمراكب')}</span><div class="chips">${cityActs.map(r=>`<button class="chip" type="button" data-act="day-tog" data-id="${d.id}" data-k="acts" data-v="${r.id}" aria-pressed="${d.acts.includes(r.id)}">${esc(r.name)} <span class="p">${fmtIn(num(r.price),r.cur,true)} ${r.unit==='boat'?T('/boat','/مركب'):T('/person','/فرد')}</span></button>`).join('')||`<span class="help">—</span>`}</div></div>
-      <div class="field full"><span class="lbl">⭐ ${T('Optional tours (offered, not in the price)','رحلات اختيارية (تُعرض، خارج السعر)')}</span><div class="chips">${cityOpts.map(r=>`<button class="chip" type="button" data-act="day-tog" data-id="${d.id}" data-k="opts" data-v="${r.id}" aria-pressed="${d.opts.includes(r.id)}">${esc(r.name)} <span class="p">${fmtIn(num(r.price),r.cur,true)}</span></button>`).join('')||`<span class="help">—</span>`}</div></div>
+      <div class="g2"><div class="field"><span class="lbl">🧭 ${T('Guide','المرشد')} (${plangN(p.plang)})</span>${segB('day-set','guide',[['none',T('None','بدون')],['full',T('Full day','يوم كامل')],['half',T('Half day','نص يوم')]],d.guide,` data-id="${d.id}"`)}<span class="help" style="margin-top:4px">${g?`${fmtIn(num(g.full),g.cur,true)} / ${fmtIn(num(g.half),g.cur,true)}`:'⚠️ '+T('No price for this language and city','لا يوجد سعر لهذه اللغة والمدينة')}</span></div>
+      <div class="field"><span class="lbl">🧑‍💼 ${T('Rep','المندوب')}</span>${sel(`data-day="${d.id}:rep"`,S.lists.reps.map(r=>[r.id,`${cityN(r.city)} · ${optN('service',r.service)} · ${fmtIn(num(r.price),r.cur,true)}`]),d.rep,T('Rep','المندوب'),T('No rep','بدون مندوب'))}</div></div></div>
+      <div class="dgrp"><h4>🍽️ ${T('Meals','الوجبات')}</h4>
+      <div class="g2"><div class="field"><span class="lbl">🍽️ ${T('Lunch','الغداء')}</span>${sel(`data-day="${d.id}:lunch"`,rests.filter(r=>num(r.lunch)>0).map(r=>[r.id,`${r.name} · ${fmtIn(num(r.lunch),r.cur,true)}`]),d.lunch,T('Lunch','الغداء'),T('No lunch','بدون غداء'))}</div>
+      <div class="field"><span class="lbl">🍲 ${T('Dinner','العشاء')}</span>${sel(`data-day="${d.id}:dinner"`,rests.filter(r=>num(r.dinner)>0).map(r=>[r.id,`${r.name} · ${fmtIn(num(r.dinner),r.cur,true)}`]),d.dinner,T('Dinner','العشاء'),T('No dinner','بدون عشاء'))}</div></div></div>
+      <div class="dgrp"><h4>✈️ ${T('Flight or train','الطيران أو القطار')}</h4>
+      ${showF||showT?`<div class="g2">${showF?`<div class="field"><span class="lbl">✈️ ${T('Domestic flight','طيران داخلي')}</span>${sel(`data-day="${d.id}:flight"`,S.lists.flights.map(r=>[r.id,`${r.from} → ${r.to} · ${fmtIn(num(r.price),r.cur,true)}`]),d.flight,T('Flight','الطيران'),T('No flight','بدون طيران'))}</div>`:''}${showT?`<div class="field"><span class="lbl">🚆 ${T('Sleeper train','قطار النوم')}</span>${sel(`data-day="${d.id}:train"`,S.lists.trains.map(r=>[r.id,`${r.from} → ${r.to} · ${fmtIn(num(r.dbl),r.cur,true)}`]),d.train,T('Train','القطار'),T('No train','بدون قطار'))}</div>`:''}</div>`:''}
+      ${!showF||!showT?`<div class="row">${!showF?`<button class="btn small dashed" type="button" data-act="travel-add" data-id="${d.id}" data-v="flight">+ ✈️ ${T('Domestic flight','طيران داخلي')}</button>`:''}${!showT?`<button class="btn small dashed" type="button" data-act="travel-add" data-id="${d.id}" data-v="train">+ 🚆 ${T('Sleeper train','قطار النوم')}</button>`:''}</div>`:''}</div>
     </div>`;
   }
   return `<div class="day${open?' open':''}" id="day-${d.id}">
@@ -965,6 +1010,13 @@ function internalView(){
 /* ============ panel ============ */
 function donut(parts,total){const R=48,C=2*Math.PI*R;let acc=0;return `<svg width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="${T('Where the money goes','توزيع السعر')}"><circle cx="60" cy="60" r="${R}" fill="none" style="stroke:var(--surface-2)" stroke-width="16"/>${parts.map(x=>{const len=x.v/total*C,g=parts.length>1?Math.min(1.5,len/2):0;const s=`<circle cx="60" cy="60" r="${R}" fill="none" style="stroke:var(${x.col})" stroke-width="16" stroke-dasharray="${Math.max(0,len-g)} ${C}" stroke-dashoffset="${-acc}" transform="rotate(-90 60 60)"><title>${esc(x.l)}</title></circle>`;acc+=len;return s;}).join('')}</svg>`;}
 let lastBig=null;
+let undoSnap=null, undoTimer=null, tplArm=null, tplTimer=null;
+function snackHtml(){return undoSnap?`<span>${esc(undoSnap.msg)}</span><button class="btn small" type="button" data-act="undo">↶ ${T('Undo','تراجع')}</button>`:'';}
+function showSnack(){const el=$('#snack'); if(!el) return; el.innerHTML=snackHtml(); el.hidden=!undoSnap;}
+function withUndo(msg,fn){const snap=clone(S.prog); fn(); undoSnap={msg,prog:snap}; clearTimeout(undoTimer); undoTimer=setTimeout(()=>{undoSnap=null; showSnack();},7000); showSnack();}
+let fxOpen=false;
+const fxChipTxt=()=>`<span class="emo">💱</span><span class="num">$${esc(S.fx.USD)} · €${esc(S.fx.EUR)}</span>`;
+const travelOpen=new Set(); // days where staff tapped '+ flight' / '+ train' (not saved)
 function renderPanel(){
   const el=$('#panel'); if(!el) return; const p=P();
   if(!RES.res.length){el.innerHTML=`<div class="empty">${T('Add the number of adults in step 2.','أدخل عدد الكبار في الخطوة 2.')}</div>`; $('#mbar').innerHTML=''; return;}
@@ -1082,7 +1134,7 @@ function onInput(e){
   const isChk=el.type==='checkbox', commit=isChk||el.tagName==='SELECT'||el.type==='date';
   if(e.type==='input'&&commit) return; if(e.type==='change'&&!commit) return;
   const val=isChk?el.checked:(el.type==='number'?num(el.value):el.value); const p=P();
-  if(d.fx){S.fx[d.fx]=val; S.fxDate=todayIso();}
+  if(d.fx){S.fx[d.fx]=val; S.fxDate=todayIso(); const c=$('#fx-chip'); if(c) c.innerHTML=fxChipTxt();}
   else if(d.p){
     if(d.p==='ndays'){setDays(Math.max(1,Math.round(val))); save(); renderStep(); refresh(); return;}
     p[d.p]=(d.p==='adults'||d.p==='focEvery')?Math.max(0,Math.round(val)):val;
@@ -1092,6 +1144,7 @@ function onInput(e){
   else if(d.kid){const k=p.children.find(x=>x.id===d.kid); if(k) k.age=val;}
   else if(d.day){const [id,f]=d.day.split(':'), day=p.days.find(x=>x.id===id); if(!day) return; day[f]=val;
     if(f==='city'&&p.days[0]===day) p.arrCity=val;
+    if((f==='flight'||f==='train')&&!val) travelOpen.delete(id+':'+f);
     if(f==='city') S.lists.tickets.filter(t=>t.auto&&t.city===val).forEach(t=>{if(!day.tix.includes(t.id)) day.tix.push(t.id);});
     if(el.tagName==='SELECT'){save(); renderStep(); refresh(); return;}}
   else if(d.trmode){const [did,tid]=d.trmode.split(':'), day=p.days.find(x=>x.id===did), t=day&&day.trans.find(x=>x.id===tid); if(t) t.mode=val;}
@@ -1125,14 +1178,20 @@ document.addEventListener('click',e=>{
     case 'lang': S.ui.lang=v; save(); renderShell(); break;
     case 'hide-sample': S.ui.sample=false; save(); renderShell(); break;
     case 'step': S.ui.step=num(v); save(); if(viewName()!=='program'){location.hash='program';} else {renderStepbar(); renderStep(); renderPanel(); const sb=$('#stepbar'); if(sb&&sb.getBoundingClientRect().top<0) window.scrollTo({top:window.scrollY+sb.getBoundingClientRect().top-8,behavior:reduceMotion()?'auto':'smooth'});} break;
-    case 'tpl': applyTpl(v); S.ui.open=null; save(); S.ui.step=v==='blank'?1:3; renderProgram(); break;
+    case 'tpl': {
+      if(p.days.length&&tplArm!==v){tplArm=v; clearTimeout(tplTimer); tplTimer=setTimeout(()=>{tplArm=null; if(viewName()==='program'&&S.ui.step===1) renderStep();},5000); renderStep(); break;}
+      tplArm=null; const t=TEMPLATES.find(x=>x.id===v), name=t?T(t.n[0],t.n[1]):T('Blank program','برنامج فاضي');
+      withUndo(T(`Replaced with “${name}”.`,`تم الاستبدال بـ «${name}».`),()=>applyTpl(v)); S.ui.open=null; S.ui.step=v==='blank'?1:3; save(); renderProgram(); break; }
+    case 'fx-toggle': fxOpen=!fxOpen; { const f=$('#fxbar'), c=$('#fx-chip'); if(f) f.classList.toggle('open',fxOpen); if(c) c.setAttribute('aria-expanded',fxOpen); if(fxOpen){const i=$('#fx-USD'); if(i) i.focus();} } break;
+    case 'undo': if(undoSnap){S.prog=undoSnap.prog; undoSnap=null; clearTimeout(undoTimer); lastBig=null; save(); renderView(); showSnack();} break;
+    case 'travel-add': travelOpen.add(id+':'+v); renderStep(); { const el=document.querySelector(`[data-day="${id}:${v}"]`); if(el) el.focus(); } break;
     case 'pset': p[k]=(k==='plang'||k==='cur'||k==='status'||k==='profitMode')?v:+v; save(); if(viewName()==='settings'){renderSettings(); break;} renderStep(); refresh(); break;
     case 'sset': S.set[k]=isNaN(+v)?v:+v; save(); renderSettings(); break;
     case 'ui': S.ui[k]=v; save(); renderStep(); break;
     case 'inc': { const inp=b.parentElement.querySelector('input'); inp.value=Math.max(0,num(inp.value)+dd); inp.dispatchEvent(new Event('input',{bubbles:true})); if(inp.dataset.stay&&viewName()==='program'){renderStep();} break; }
     case 'auto-rooms': {const n=num(p.adults); p.rooms={sgl:n%2,dbl:Math.floor(n/2),tpl:0}; save(); renderStep(); refresh(); break;}
     case 'kid-add': p.children.push({id:uid(),age:6}); save(); renderStep(); refresh(); break;
-    case 'kid-del': p.children=p.children.filter(x=>x.id!==id); save(); renderStep(); refresh(); break;
+    case 'kid-del': withUndo(T('Child removed.','تم حذف الطفل.'),()=>{p.children=p.children.filter(x=>x.id!==id);}); save(); renderStep(); refresh(); break;
     case 'tier-add': if(!p.tiers.includes(num(v))) p.tiers.push(num(v)); save(); renderStep(); refresh(); break;
     case 'tier-del': p.tiers=p.tiers.filter(n=>n!==num(v)); save(); renderStep(); refresh(); break;
     case 'focus': S.ui.focus=num(v); save(); renderPanel(); break;
@@ -1140,14 +1199,14 @@ document.addEventListener('click',e=>{
     case 'day-add': { const prev=p.days[p.days.length-1]; const d=mkDay(prev?prev.city:p.arrCity); p.days.push(d); S.ui.open=d.id; save(); renderStep(); refresh(); break; }
     case 'day-copy': { const i=p.days.findIndex(x=>x.id===id); const c=clone(p.days[i]); c.id=uid(); c.trans.forEach(t=>t.id=uid()); p.days.splice(i+1,0,c); S.ui.open=c.id; save(); renderStep(); refresh(); break; }
     case 'day-move': { const i=p.days.findIndex(x=>x.id===id); mv(p.days,i,dd); save(); renderStep(); refresh(); break; }
-    case 'day-del': p.days=p.days.filter(x=>x.id!==id); save(); renderStep(); refresh(); break;
+    case 'day-del': { const n=p.days.findIndex(x=>x.id===id)+1; withUndo(T(`Day ${n} deleted.`,`تم حذف يوم ${n}.`),()=>{p.days=p.days.filter(x=>x.id!==id);}); } save(); renderStep(); refresh(); break;
     case 'day-tog': { const d=day(); if(!d) break; const arr=d[k]; const i=arr.indexOf(v); if(i>=0) arr.splice(i,1); else arr.push(v); save(); renderStep(); refresh(); break; }
     case 'day-set': { const d=day(); if(d) d[k]=v; save(); renderStep(); refresh(); break; }
     case 'tr-ret': { const d=p.days.find(x=>x.id===b.dataset.day), t=d&&d.trans.find(x=>x.id===k); if(t) t.ret=v==='1'; save(); renderStep(); refresh(); break; }
-    case 'tr-del': { const d=day(); if(d) d.trans=d.trans.filter(x=>x.id!==v); save(); renderStep(); refresh(); break; }
+    case 'tr-del': { const d=day(); if(d) withUndo(T('Transport removed.','تم حذف النقل.'),()=>{d.trans=d.trans.filter(x=>x.id!==v);}); save(); renderStep(); refresh(); break; }
     case 'stay-add': { const last=p.stays[p.stays.length-1]; p.stays.push(mkStay(v,{city:(last&&last.city)||p.arrCity,nights:1,label:v==='none'?T('Night on the sleeper train','ليلة في قطار النوم'):''})); save(); renderStep(); refresh(); break; }
     case 'stay-move': { const i=p.stays.findIndex(x=>x.id===id); mv(p.stays,i,dd); save(); renderStep(); refresh(); break; }
-    case 'stay-del': p.stays=p.stays.filter(x=>x.id!==id); save(); renderStep(); refresh(); break;
+    case 'stay-del': withUndo(T('Stay removed.','تم حذف الإقامة.'),()=>{p.stays=p.stays.filter(x=>x.id!==id);}); save(); renderStep(); refresh(); break;
     case 'hide': { const i=p.hide.indexOf(v); if(i>=0) p.hide.splice(i,1); else p.hide.push(v); save(); renderStep(); break; }
     case 'add-line': { const inp=$('#add-'+v); const t=inp&&inp.value.trim(); if(!t) break; (v==='in'?p.extraIn:p.extraEx).push(t); save(); renderStep(); break; }
     case 'save-file': { p.saved=todayIso(); const m=RES.main; const snap=clone(p); snap.sum=m?{v:m.cat.a.sellD/rateOf(p.cur),c:p.cur}:null; const i=S.files.findIndex(x=>x.id===p.id); if(i>=0) S.files[i]=snap; else S.files.push(snap); save(); renderStep(); renderStepbar(); const n=$('#saved-note'); if(n) n.textContent='💾 '+T('Saved to Files.','تم الحفظ في الملفات.'); break; }
