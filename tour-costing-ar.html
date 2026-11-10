@@ -489,10 +489,40 @@ const TEMPLATES=[
 ];
 
 /* ============ state ============ */
-const KEY='esperanza-pricing.v4.'+LANG_DEFAULT;
+/* One store shared by the English and Arabic pages. The display language is kept per page. */
+const KEY='esperanza-pricing.v4', LANG_KEY='esperanza-pricing.lang.'+LANG_DEFAULT, MIGRATED_KEY='esperanza-pricing.migrated';
+const OLD_KEYS=['en','ar'].map(l=>'esperanza-pricing.v4.'+l); // per-page stores before Nov 2026; left in place as a backup
+const readJ=k=>{try{return JSON.parse(localStorage.getItem(k)||'null');}catch(e){return null;}};
+const okState=s=>!!(s&&s.v===4&&s.prog&&s.lists);
+const EXAMPLE_CLIENTS=['Example – Rossi group (Italy)','مثال – جروب روسي (إيطاليا)'];
+function mergeOld(){
+  // Both pages may have saved data under their own key. Keep everything: start from the store
+  // with more saved files (this page's on a tie) and add what only the other one has.
+  const own='esperanza-pricing.v4.'+LANG_DEFAULT;
+  const found=OLD_KEYS.map(k=>({k,s:readJ(k)})).filter(x=>okState(x.s))
+    .sort((a,b)=>(b.s.files||[]).length-(a.s.files||[]).length||(b.k===own)-(a.k===own));
+  if(!found.length) return null;
+  const base=found[0].s;
+  found.slice(1).forEach(({s:o})=>{
+    base.files=base.files||[];
+    (o.files||[]).forEach(f=>{const i=base.files.findIndex(x=>x.id===f.id); if(i<0) base.files.push(f); else if((f.saved||'')>(base.files[i].saved||'')) base.files[i]=f;});
+    if(o.prog&&!base.files.some(x=>x.id===o.prog.id)&&o.prog.id!==base.prog.id&&!EXAMPLE_CLIENTS.includes(o.prog.client)){
+      const d=clone(o.prog); delete d.sum; base.files.push(d); // unsaved work from the other page, kept as a draft in Files
+    }
+    Object.keys(o.lists||{}).forEach(cat=>{const rows=base.lists[cat]=base.lists[cat]||[]; (o.lists[cat]||[]).forEach(r=>{if(!rows.some(x=>x.id===r.id)) rows.push(r);});});
+    (o.rates||[]).forEach(r=>{if(!(base.rates||[]).some(x=>x.id===r.id)) (base.rates=base.rates||[]).push(r);});
+    base.seq=Math.max(base.seq||0,o.seq||0);
+  });
+  return base;
+}
 function load(){
-  let s=null; try{s=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){}
-  if(s&&s.v===4&&s.prog&&s.lists) return s;
+  let s=readJ(KEY);
+  if(!okState(s)&&!localStorage.getItem(MIGRATED_KEY)){
+    const m=mergeOld();
+    try{localStorage.setItem(MIGRATED_KEY,'1');}catch(e){}
+    if(m){s=m; try{localStorage.setItem(KEY,JSON.stringify(s));}catch(e){}}
+  }
+  if(okState(s)){s.ui.lang=pageLang(s); return s;}
   const d=defaults(LANG_DEFAULT);
   let old=null; try{old=JSON.parse(localStorage.getItem('group-tour-costing.v3.'+LANG_DEFAULT)||'null');}catch(e){}
   if(old&&old.rates){
@@ -504,11 +534,23 @@ function load(){
     if(old.tips) Object.keys(old.tips).forEach(v=>d.dtips[v]=Object.assign({},d.dtips[v]||{},old.tips[v]));
     if(old.quote){['vat','vatOn','policy','staff'].forEach(k=>{if(old.quote[k]!==undefined) d.set[k]=old.quote[k];}); d.set.driverTips=!!old.quote.tipsOn;}
   }
-  S=d; const p=blankProg(); TEMPLATES[1].build(p); p.client=sn('Example – Rossi group (Italy)','مثال – جروب روسي (إيطاليا)'); p.agency=sn('Example agency','وكالة تجريبية'); p.tpl='cc'; d.prog=p;
+  S=d; const p=blankProg(); TEMPLATES[1].build(p); p.client=sn(EXAMPLE_CLIENTS[0],EXAMPLE_CLIENTS[1]); p.agency=sn('Example agency','وكالة تجريبية'); p.tpl='cc'; d.prog=p;
+  d.ui.lang=pageLang(null);
   return d;
 }
+function pageLang(s){
+  const l=localStorage.getItem(LANG_KEY); if(l==='en'||l==='ar') return l;
+  const o=readJ('esperanza-pricing.v4.'+LANG_DEFAULT); // language this page used before the shared store
+  return o&&o.ui&&(o.ui.lang==='en'||o.ui.lang==='ar')?o.ui.lang:LANG_DEFAULT;
+}
 S=load();
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S)); localStorage.setItem(LANG_KEY,S.ui.lang);}catch(e){}}
+// The other page (or another tab) saved: pick up its data so this tab doesn't overwrite it later.
+window.addEventListener('storage',e=>{
+  if(e.key!==KEY||!e.newValue) return;
+  let s=null; try{s=JSON.parse(e.newValue);}catch(err){} if(!okState(s)) return;
+  s.ui.lang=S.ui.lang; S=s; lastBig=null; renderShell();
+});
 const P=()=>S.prog;
 const L=(cat,id)=>(S.lists[cat]||[]).find(r=>r.id===id);
 const rateById=id=>S.rates.find(r=>r.id===id);
