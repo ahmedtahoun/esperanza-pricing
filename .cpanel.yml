@@ -1,0 +1,9 @@
+---
+# cPanel Git deployment: copies only the website files into the reem.wheretospot.com folder.
+# In cPanel: Git Version Control → Manage → Pull or Deploy → "Update from Remote", then "Deploy HEAD Commit".
+# The .git folder, scripts and docs are never copied to the web.
+deployment:
+  tasks:
+    - export DEPLOYPATH=$HOME/reem.wheretospot.com/
+    - /bin/mkdir -p $DEPLOYPATH
+    - /bin/cp index.html tour-costing.html tour-costing-ar.html robots.txt $DEPLOYPATH
