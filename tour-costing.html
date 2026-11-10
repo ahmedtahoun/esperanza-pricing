@@ -95,6 +95,8 @@ html[dir="rtl"] .sg-ar{transform:scaleX(-1);display:inline-block}
 
 /* controls */
 input,select,textarea{font:inherit;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:7px 9px;min-width:0}
+input[type="number"]{-moz-appearance:textfield;appearance:textfield}
+input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 input[type="number"]{font-family:var(--font-num);font-size:13px;text-align:right}
 input[type="checkbox"]{width:17px;height:17px;accent-color:var(--accent);margin:0}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -498,7 +500,7 @@ const trn=(rate,ret)=>({id:uid(),rate,ret:!!ret,mode:'auto'});
 const mkStay=(type,o)=>Object.assign({id:uid(),type,city:'cai',nights:1,a:'',b:'',label:''},o||{});
 function nextFileNo(){S.seq=(S.seq||0)+1;return `ESP-${new Date().getFullYear()}-${String(S.seq).padStart(3,'0')}`;}
 function blankProg(){
-  return {id:uid(),fileNo:nextFileNo(),status:'quote',client:'',agency:'',nat:'n_it',plang:'it',cur:'USD',adults:20,children:[],rooms:{sgl:0,dbl:10,tpl:0},focEvery:S.set.focEvery,tiers:[25,30],
+  return {id:uid(),fileNo:nextFileNo(),status:'quote',client:'',agency:'',nat:'n_it',plang:'it',cur:'USD',adults:0,children:[],rooms:{sgl:0,dbl:0,tpl:0},focEvery:0,tiers:[],
     start:addD(todayIso(),45),arrCity:'cai',days:[],stays:[],hide:[],extraIn:[],extraEx:[],profitMode:S.set.profitMode,profit:S.set.profit,created:todayIso(),saved:null,tpl:null};
 }
 const TEMPLATES=[
@@ -583,7 +585,7 @@ function load(){
     if(old.tips) Object.keys(old.tips).forEach(v=>d.dtips[v]=Object.assign({},d.dtips[v]||{},old.tips[v]));
     if(old.quote){['vat','vatOn','policy','staff'].forEach(k=>{if(old.quote[k]!==undefined) d.set[k]=old.quote[k];}); d.set.driverTips=!!old.quote.tipsOn;}
   }
-  S=d; const p=blankProg(); TEMPLATES[1].build(p); p.client=sn(EXAMPLE_CLIENTS[0],EXAMPLE_CLIENTS[1]); p.agency=sn('Example agency','وكالة تجريبية'); p.tpl='cc'; d.prog=p;
+  S=d; const p=blankProg(); TEMPLATES[1].build(p); p.client=sn(EXAMPLE_CLIENTS[0],EXAMPLE_CLIENTS[1]); p.agency=sn('Example agency','وكالة تجريبية'); p.tpl='cc'; Object.assign(p,{adults:20,rooms:{sgl:0,dbl:10,tpl:0},focEvery:d.set.focEvery,tiers:[25,30]}); d.prog=p;
   d.ui.lang=pageLang(null);
   return d;
 }
@@ -1215,7 +1217,7 @@ function onInput(e){
 }
 document.addEventListener('input',onInput); document.addEventListener('change',onInput);
 function setDays(n){const p=P(); while(p.days.length<n){const prev=p.days[p.days.length-1]; p.days.push(mkDay(prev?prev.city:p.arrCity));} if(p.days.length>n) p.days.length=n;}
-function applyTpl(id){const p=P(); p.hide=[]; if(id==='blank'){p.days=[mkDay(p.arrCity,{title:T('Arrival','الوصول')})]; p.stays=[]; p.tpl='blank'; return;} const t=TEMPLATES.find(x=>x.id===id); if(t){t.build(p); p.tpl=id;}}
+function applyTpl(id){const p=P(); p.hide=[]; if(id==='blank'){p.days=[mkDay(p.arrCity,{title:T('Arrival','الوصول')})]; p.stays=[]; Object.assign(p,{adults:0,children:[],rooms:{sgl:0,dbl:0,tpl:0},focEvery:0,tiers:[]}); S.ui.focus=null; p.tpl='blank'; return;} const t=TEMPLATES.find(x=>x.id===id); if(t){t.build(p); p.tpl=id;}}
 
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.target.id&&e.target.id.startsWith('add-')){e.preventDefault(); const b=document.querySelector(`[data-act="add-line"][data-v="${e.target.id.slice(4)}"]`); if(b) b.click();}
