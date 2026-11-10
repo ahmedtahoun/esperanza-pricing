@@ -147,12 +147,11 @@ button{font:inherit;cursor:pointer;color:inherit}
 .kid input{width:4rem;padding:4px 6px}
 
 /* calendar */
-.cal{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
-.cal div{flex:none;width:80px;border:1px solid var(--line);border-radius:10px;padding:6px;text-align:center;background:var(--surface)}
-.cal div.pk{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 7%,var(--surface))}
-.cal b{display:block;font-size:11px;color:var(--muted)}
-.cal span{display:block;font-size:13px;font-weight:600}
-.cal small{display:block;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tripbar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 16px;padding:12px 14px;margin-bottom:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+.tripbar .field{flex:0 1 12rem}
+.trip-sum{flex:1 1 14rem;display:flex;flex-direction:column;gap:2px;font-size:13px;padding-bottom:4px}
+.trip-sum b{font-size:14px}
+.trip-sum .peak{align-self:flex-start}
 
 /* day cards */
 .days{display:flex;flex-direction:column;gap:10px}
@@ -444,7 +443,7 @@ function defaults(L){
     rates:RATES.map(r=>({id:r[0],g:r[1],kind:r[2],ar:r[3],en:r[4],tip:r[5],p:{limo:0,hiace:r[6],coaster:r[7],bus:r[8],jeep:r[10]||0},check:r[9]===1,sample:r[9]===2})),
     lists:seedLists(),
     prog:null, files:[],
-    ui:{lang:L,step:1,open:null,focus:null,view:'client',list:'transport',sample:true}
+    ui:{lang:L,steps:6,step:1,open:null,focus:null,view:'client',list:'transport',sample:true}
   };
 }
 
@@ -522,7 +521,9 @@ function load(){
     try{localStorage.setItem(MIGRATED_KEY,'1');}catch(e){}
     if(m){s=m; try{localStorage.setItem(KEY,JSON.stringify(s));}catch(e){}}
   }
-  if(okState(s)){s.ui.lang=pageLang(s); return s;}
+  if(okState(s)){s.ui.lang=pageLang(s);
+    if(s.ui.steps!==6){if(s.ui.step>=4) s.ui.step--; s.ui.steps=6;} // Dates and Days merged into one step (Nov 2026)
+    s.ui.step=Math.min(Math.max(1,s.ui.step||1),6); return s;}
   const d=defaults(LANG_DEFAULT);
   let old=null; try{old=JSON.parse(localStorage.getItem('group-tour-costing.v3.'+LANG_DEFAULT)||'null');}catch(e){}
   if(old&&old.rates){
@@ -710,7 +711,7 @@ function exclItems(){
 }
 
 /* ============ shell ============ */
-const STEPS=[['🧾','Client','العميل'],['👥','People & rooms','الأفراد والغرف'],['📅','Dates','التواريخ'],['🗓️','Days','الأيام'],['🏨','Hotels & cruise','الإقامة'],['✅','Included','يشمل / لا يشمل'],['💾','Review & save','المراجعة والحفظ']];
+const STEPS=[['🧾','Client','العميل'],['👥','People & rooms','الأفراد والغرف'],['📅','Dates & days','التواريخ والأيام'],['🏨','Hotels & cruise','الإقامة'],['✅','Included','يشمل / لا يشمل'],['💾','Review & save','المراجعة والحفظ']];
 function viewName(){const h=(location.hash||'').slice(1);return ['program','files','lists','settings'].includes(h)?h:'program';}
 function renderShell(){
   const ar=isAr(); document.documentElement.lang=ar?'ar':'en'; document.documentElement.dir=ar?'rtl':'ltr'; document.title=T('Esperanza Program Pricing','تسعير برامج إسبيرانزا');
@@ -736,22 +737,30 @@ function renderProgram(){
    <div class="layout"><div class="step-card" id="step"></div><aside class="panel" id="panel" aria-live="polite"></aside></div><div class="mbar" id="mbar"></div>`;
   renderStepbar(); renderStep(); renderPanel();
 }
-function stepDone(i){const p=P(); return [!!p.client.trim(),num(p.adults)>0,!!p.start,p.days.length>0&&p.days.every(d=>d.city),p.stays.length>0&&p.stays.every(s=>s.type==='none'||s.a),true,!!p.saved][i];}
+function stepDone(i){const p=P(); return [!!p.client.trim(),num(p.adults)>0,!!p.start&&p.days.length>0&&p.days.every(d=>d.city),p.stays.length>0&&p.stays.every(s=>s.type==='none'||s.a),true,!!p.saved][i];}
 function stepSum(i){const p=P(), m=RES&&RES.main;
-  return [p.client||T('Not set','لم يحدد'),`${pl(p.adults,m&&m.F)} ${T('adults','كبار')}${p.children.length?' · '+p.children.length+' '+T('children','أطفال'):''}`,p.start?fmtD(p.start,{day:'numeric',month:'short'}):'—',
-   p.days.length+' '+T('days','أيام'),p.stays.reduce((a,s)=>a+num(s.nights),0)+' '+T('nights','ليالي'),T('Built automatically','تلقائي'),p.saved?({quote:T('Quote','عرض سعر'),confirmed:T('Confirmed','مؤكد'),cancelled:T('Cancelled','ملغي')})[p.status]:T('Not saved','غير محفوظ')][i];}
+  return [p.client||T('Not set','لم يحدد'),`${pl(p.adults,m&&m.F)} ${T('adults','كبار')}${p.children.length?' · '+p.children.length+' '+T('children','أطفال'):''}`,(p.start?fmtD(p.start,{day:'numeric',month:'short'})+' · ':'')+p.days.length+' '+T('days','أيام'),
+p.stays.reduce((a,s)=>a+num(s.nights),0)+' '+T('nights','ليالي'),T('Built automatically','تلقائي'),p.saved?({quote:T('Quote','عرض سعر'),confirmed:T('Confirmed','مؤكد'),cancelled:T('Cancelled','ملغي')})[p.status]:T('Not saved','غير محفوظ')][i];}
 function renderStepbar(){
   const el=$('#stepbar'); if(!el) return;
   el.innerHTML=STEPS.map((s,i)=>`<button type="button" data-act="step" data-v="${i+1}" class="${stepDone(i)?'done':''}"${S.ui.step===i+1?' aria-current="step"':''}><span class="emo">${s[0]}</span><span><b>${i+1}. ${T(s[1],s[2])}</b><small>${esc(stepSum(i))}</small></span><span class="ck">✓</span></button>`).join('');
 }
 function head(i,txt){const s=STEPS[i-1];return `<div class="step-head"><span class="s-ico"><span class="emo">${s[0]}</span></span><div><h2>${i}. ${T(s[1],s[2])}</h2><p>${txt}</p></div></div>`;}
-function nav(i){return `<div class="step-nav">${i>1?`<button class="btn" type="button" data-act="step" data-v="${i-1}">${T('← Back','→ السابق')}</button>`:'<span></span>'}${i<7?`<button class="btn primary" type="button" data-act="step" data-v="${i+1}">${T('Next: ','التالي: ')}${T(STEPS[i][1],STEPS[i][2])} ${T('→','←')}</button>`:''}</div>`;}
+function nav(i){return `<div class="step-nav">${i>1?`<button class="btn" type="button" data-act="step" data-v="${i-1}">${T('← Back','→ السابق')}</button>`:'<span></span>'}${i<STEPS.length?`<button class="btn primary" type="button" data-act="step" data-v="${i+1}">${T('Next: ','التالي: ')}${T(STEPS[i][1],STEPS[i][2])} ${T('→','←')}</button>`:''}</div>`;}
 const stp=(attr,val,lab)=>`<div class="stepper"><button type="button" data-act="inc" data-d="-1" aria-label="−">−</button><input ${attr} type="number" min="0" step="1" value="${esc(val)}" aria-label="${esc(lab||'')}"><button type="button" data-act="inc" data-d="1" aria-label="+">+</button></div>`;
 const sel=(attr,opts,cur,lab,none)=>`<select ${attr} aria-label="${esc(lab||'')}">${none!==undefined?`<option value="">${esc(none)}</option>`:''}${opts.map(([v,t])=>`<option value="${esc(v)}"${String(v)===String(cur)?' selected':''}>${esc(t)}</option>`).join('')}</select>`;
 const segB=(act,key,opts,cur,extra)=>`<div class="seg">${opts.map(([v,t])=>`<button type="button" data-act="${act}" data-k="${key}" data-v="${v}"${extra||''} aria-pressed="${String(cur)===String(v)}">${t}</button>`).join('')}</div>`;
 function roomCheck(){const p=P(), cap=num(p.rooms.sgl)+2*num(p.rooms.dbl)+3*num(p.rooms.tpl), ok=cap===num(p.adults); return {ok,t:ok?'✓ '+T(`Rooms fit all ${p.adults} adults.`,`الغرف مناسبة لكل الـ ${p.adults} فرد.`):'⚠️ '+T(`Rooms hold ${cap} people, but there are ${p.adults} adults.`,`الغرف تسع ${cap} فرد والكبار ${p.adults}.`)};}
 function nightCheck(){const p=P(), nights=p.stays.reduce((a,s)=>a+num(s.nights),0), need=Math.max(0,p.days.length-1), ok=nights===need; return {ok,t:ok?'✓ '+T(`${nights} nights — matches the ${p.days.length}-day program.`,`${nights} ليالي — مطابق لبرنامج ${p.days.length} أيام.`):'⚠️ '+T(`${nights} nights chosen; the ${p.days.length}-day program needs ${need}.`,`تم اختيار ${nights} ليالي، والبرنامج يحتاج ${need}.`)};}
 
+const allPeak=()=>{const n=P().days.length; return n>0&&P().days.every((d,j)=>isPeak(dayDate(j)));};
+function tripSummary(){
+  const p=P(), n=p.days.length; if(!n||!p.start) return '';
+  const pk=p.days.filter((d,j)=>isPeak(dayDate(j))).length, yr={day:'numeric',month:'short',year:'numeric'};
+  const seas=(S.set.seasons||[]).filter(se=>p.days.some((d,j)=>{const md=dayDate(j).slice(5);return se.from&&se.to&&(se.from<=se.to?(md>=se.from&&md<=se.to):(md>=se.from||md<=se.to));})).map(se=>esc(se.name)).join(', ');
+  return `<b>${fmtD(dayDate(0),yr)} → ${fmtD(dayDate(n-1),yr)}</b><span>${n} ${T('days','أيام')} · ${Math.max(0,n-1)} ${T('nights','ليالي')}</span>`+
+    (pk?`<span class="peak">🔥 ${pk===n?T('High season','موسم ذروة'):T(`${pk} of ${n} days in high season`,`${pk} من ${n} أيام في موسم الذروة`)}${seas?' · '+seas:''}</span>`:`<span class="muted">${T('No high-season days','لا توجد أيام ذروة')}</span>`);
+}
 function renderStep(){
   const el=$('#step'); if(!el) return; const i=S.ui.step, p=P(); let h='';
   if(i===1){
@@ -788,35 +797,30 @@ function renderStep(){
         ${[10,15,20,25,30,35,40].filter(n=>!p.tiers.includes(n)&&n!==num(p.adults)).slice(0,4).map(n=>`<button class="chip" type="button" data-act="tier-add" data-v="${n}">+${n}</button>`).join('')}</div></div>`;
   }
   if(i===3){
-    h=head(3,T('Arrival date and length. Day names fill in by themselves, and high-season days are marked.','تاريخ الوصول وعدد الأيام. أسماء الأيام تتكتب تلقائيًا، وأيام الذروة تتعلّم.'));
-    h+=`<div class="sect"><div class="grid">
+    h=head(3,T('Pick the arrival date, then open each day to choose its city, visits, transport, guide, meals, flight or train. Dates fill in by themselves.','اختار تاريخ الوصول، وبعدين افتح كل يوم واختار المدينة والمزارات والنقل والمرشد والوجبات والطيران أو القطار. التواريخ بتتكتب تلقائيًا.'));
+    h+=`<div class="tripbar">
       <div class="field"><label class="lbl" for="p-start">📅 ${T('Arrival date','تاريخ الوصول')}</label><input id="p-start" data-p="start" type="date" value="${esc(p.start)}"></div>
-      <div class="field"><span class="lbl">✈️ ${T('Arrival city','مدينة الوصول')}</span>${sel('data-p="arrCity"',Object.keys(CITIES).filter(c=>c!=='nile').map(c=>[c,cityN(c)]),p.arrCity,T('Arrival city','مدينة الوصول'))}</div>
-      <div class="field"><span class="lbl">🗓️ ${T('Number of days','عدد الأيام')}</span>${stp('data-p="ndays"',p.days.length,T('Days','الأيام'))}</div>
-    </div>
-    <div class="cal">${p.days.map((d,j)=>{const dt=dayDate(j);return `<div class="${isPeak(dt)?'pk':''}"><b>${T('Day','يوم')} ${j+1}</b><span>${fmtD(dt,{weekday:'short'})}</span><small>${fmtD(dt,{day:'numeric',month:'short'})}</small><small>${isPeak(dt)?'🔥 ':''}${esc(cityN(d.city))}</small></div>`;}).join('')}</div>
-    <div class="help">🔥 ${T('High season','موسم الذروة')}: ${(S.set.seasons||[]).map(s=>`${esc(s.name)} (${s.from} → ${s.to})`).join(' · ')} — ${T('dates are in Settings.','التواريخ في الإعدادات.')}</div></div>`;
-  }
-  if(i===4){
-    h=head(4,T('Open a day to choose its city, visits, transport, guide, rep, meals, flight or train. The price updates with every choice.','افتح أي يوم واختار المدينة والمزارات والنقل والمرشد والمندوب والوجبات والطيران أو القطار. السعر بيتحدث مع كل اختيار.'));
+      <div class="field"><span class="lbl">🗓️ ${T('Days','عدد الأيام')}</span>${stp('data-p="ndays"',p.days.length,T('Days','الأيام'))}</div>
+      <div class="trip-sum">${tripSummary()}</div>
+    </div>`;
     h+=`<div class="days">${p.days.map((d,j)=>dayCard(d,j)).join('')||`<div class="empty">${T('No days yet. Add the first day, or start from a ready program in step 1.','لا توجد أيام بعد. أضف أول يوم، أو ابدأ ببرنامج جاهز في الخطوة 1.')}</div>`}</div>
       <div class="row" style="margin-top:12px"><button class="btn dashed" style="flex:1" type="button" data-act="day-add"><span class="emo">➕</span> ${T('Add a day','إضافة يوم')}</button></div>`;
   }
-  if(i===5){
+  if(i===4){
     const nc=nightCheck();
-    h=head(5,T('Hotels and cruise in order, night by night. Add a second option (B) to quote two categories side by side.','الفنادق والكروز بالترتيب ليلة بليلة. أضف اختيار تاني (B) لتسعير فئتين جنب بعض.'));
+    h=head(4,T('Hotels and cruise in order, night by night. Add a second option (B) to quote two categories side by side.','الفنادق والكروز بالترتيب ليلة بليلة. أضف اختيار تاني (B) لتسعير فئتين جنب بعض.'));
     h+=`<div class="check ${nc.ok?'ok':'bad'}" style="margin-bottom:12px">${nc.t}</div>
       <div class="stays">${p.stays.map((s,j)=>stayCard(s,j)).join('')||`<div class="empty">${T('No stays yet.','لا توجد إقامة بعد.')}</div>`}</div>
       <div class="row" style="margin-top:12px"><button class="btn dashed" type="button" data-act="stay-add" data-v="hotel"><span class="emo">🏨</span> ${T('Add hotel','إضافة فندق')}</button><button class="btn dashed" type="button" data-act="stay-add" data-v="cruise"><span class="emo">🚢</span> ${T('Add Nile cruise','إضافة كروز')}</button><button class="btn dashed" type="button" data-act="stay-add" data-v="none"><span class="emo">🚆</span> ${T('Night without hotel','ليلة بدون فندق')}</button></div>`;
   }
-  if(i===6){
-    h=head(6,T('Built from what you chose. Untick a line to hide it, or add your own lines.','بتطلع تلقائيًا من اختياراتك. شيل العلامة لإخفاء سطر، أو أضف سطور.'));
+  if(i===5){
+    h=head(5,T('Built from what you chose. Untick a line to hide it, or add your own lines.','بتطلع تلقائيًا من اختياراتك. شيل العلامة لإخفاء سطر، أو أضف سطور.'));
     const box=(items,kind)=>`<ul>${items.map(it=>{const off=p.hide.includes(it.k);return `<li class="${off?'off':''}"><label><input type="checkbox" data-act="hide" data-v="${esc(it.k)}"${off?'':' checked'}><span>${esc(it.t)}</span></label></li>`;}).join('')}</ul>
       <div class="add"><input id="add-${kind}" type="text" placeholder="${T('Add a line…','إضافة سطر…')}" aria-label="${T('Add a line','إضافة سطر')}"><button class="btn small" type="button" data-act="add-line" data-v="${kind}">${T('Add','إضافة')}</button></div>`;
     h+=`<div class="ie"><div class="card"><h3>✅ ${T('Included','يشمل')}</h3>${box(inclItems(),'in')}</div><div class="card"><h3>❌ ${T('Not included','لا يشمل')}</h3>${box(exclItems(),'ex')}</div></div>`;
   }
-  if(i===7){
-    h=head(7,T('Check the notes, choose the status and save the file. The client view never shows internal costs.','راجع الملاحظات واختار الحالة واحفظ الملف. عرض العميل لا يظهر فيه أي تكلفة داخلية.'));
+  if(i===6){
+    h=head(6,T('Check the notes, choose the status and save the file. The client view never shows internal costs.','راجع الملاحظات واختار الحالة واحفظ الملف. عرض العميل لا يظهر فيه أي تكلفة داخلية.'));
     const W=RES.warns;
     h+=W.length?`<div class="warns">${W.map(x=>`<div class="${x.t}">${x.t==='w'?'⚠️':''}<span>${esc(x.m)}</span></div>`).join('')}</div>`:`<div class="check ok" style="margin-bottom:14px">✓ ${T('Nothing to check.','لا توجد ملاحظات.')}</div>`;
     h+=`<div class="rv-top">${segB('ui','view',[['client','👤 '+T('Client view','عرض العميل')],['internal','🔒 '+T('Internal summary','الملخص الداخلي')]],S.ui.view)}
@@ -826,7 +830,7 @@ function renderStep(){
   }
   el.innerHTML=h+nav(i);
   if(i===2) updFocNote();
-  if(i===4) updTransHints();
+  if(i===3) updTransHints();
 }
 function bandText(){const b=(S.set.bands||[]).slice().sort((x,y)=>num(x.to)-num(y.to));let from=0;const parts=b.map(x=>{const t=`${from}–${x.to}: ${x.pct}%`;from=Math.round((num(x.to)+0.01)*100)/100;return t;});return T('Child price = % of the adult double price by age · ','سعر الطفل = نسبة من سعر الكبير (مزدوج) حسب السن · ')+parts.join(' · ')+T(` · ${from}+ adult price`,` · ${from}+ سعر كبير`);}
 function updFocNote(){const el=$('#foc-note'); if(!el) return; const m=RES.main; el.textContent=m&&m.F?T(`→ ${m.Pay}+${m.F}: ${m.F} free, cost shared by ${m.Pay}`,`← ${m.Pay}+${m.F}: ${m.F} مجاني، تكلفته على ${m.Pay}`):T('No free places.','بدون أماكن مجانية.');}
@@ -834,7 +838,7 @@ function updFocNote(){const el=$('#foc-note'); if(!el) return; const m=RES.main;
 /* day card */
 function chipTxt(e,t,extra){return `<span class="tag">${icon(e,14)} ${esc(t)}${extra||''}</span>`;}
 function dayCard(d,j){
-  const p=P(), dt=dayDate(j), open=S.ui.open===d.id, pk=isPeak(dt), ns=nightStays()[j], sum=[];
+  const p=P(), dt=dayDate(j), open=S.ui.open===d.id, pk=isPeak(dt)&&!allPeak(), ns=nightStays()[j], sum=[];
   d.tix.forEach(id=>{const r=L('tickets',id); if(r) sum.push(chipTxt(r.id==='t_pyr'?'pyr':'🎟️',r.name));});
   d.trans.forEach(t=>{const r=rateById(t.rate); if(r) sum.push(chipTxt('🚌',(isAr()?r.ar:r.en).split(' — ')[0]+(t.ret&&r.kind==='transfer'?' ↩️':'')));});
   if(d.guide!=='none') sum.push(chipTxt('🧭',d.guide==='half'?T('Guide · half day','مرشد · نص يوم'):T('Guide · full day','مرشد · يوم كامل')));
@@ -990,7 +994,7 @@ function renderPanel(){
 }
 function refresh(){compute(); renderStepbar(); renderPanel();
   if(S.ui.step===2){updFocNote(); const rc=roomCheck(), el=$('#room-check'); if(el){el.className='check '+(rc.ok?'ok':'bad'); el.textContent=rc.t;}}
-  if(S.ui.step===4) updTransHints(); if(S.ui.step===7) renderStep();}
+  if(S.ui.step===3){updTransHints(); const ts=$('.trip-sum'); if(ts) ts.innerHTML=tripSummary();} if(S.ui.step===6) renderStep();}
 
 function waText(){
   const p=P(), m=RES.main; if(!m) return '';
@@ -1009,7 +1013,7 @@ function renderFiles(){
   $('#view').innerHTML=`<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:12px"><h3>📁 ${T('Saved programs','البرامج المحفوظة')}</h3><button class="btn primary" type="button" data-act="new-prog"><span class="emo">➕</span>${T('New program','برنامج جديد')}</button></div>
     <div class="files">${f.map(x=>`<div class="file"><span class="emo" style="font-size:22px">🗂️</span><div class="t"><b>${esc(x.client||T('Untitled','بدون اسم'))}</b><span class="num">${esc(x.fileNo)}</span> <span>· ${fmtD(x.start,{day:'numeric',month:'short',year:'numeric'})} · ${x.days.length} ${T('days','أيام')} · ${x.adults} ${T('adults','كبار')}${x.sum?` · ${fmtIn(x.sum.v,x.sum.c,true)} ${T('per person','للفرد')}`:''}</span></div>
       <span class="st ${x.status}">${({quote:T('Quote','عرض سعر'),confirmed:T('Confirmed','مؤكد'),cancelled:T('Cancelled','ملغي')})[x.status]}</span>
-      <button class="btn small" type="button" data-act="file-open" data-id="${x.id}">${T('Open','فتح')}</button><button class="btn small" type="button" data-act="file-dup" data-id="${x.id}">⧉ ${T('Copy','نسخ')}</button><button class="btn small danger" type="button" data-act="file-del" data-id="${x.id}">${S.ui.delArm===x.id?T('Click again to delete','اضغط تاني للحذف'):'🗑'}</button></div>`).join('')||`<div class="empty">${T('No saved programs yet. Save one from step 7.','لا توجد برامج محفوظة. احفظ من الخطوة 7.')}</div>`}</div></div>`;
+      <button class="btn small" type="button" data-act="file-open" data-id="${x.id}">${T('Open','فتح')}</button><button class="btn small" type="button" data-act="file-dup" data-id="${x.id}">⧉ ${T('Copy','نسخ')}</button><button class="btn small danger" type="button" data-act="file-del" data-id="${x.id}">${S.ui.delArm===x.id?T('Click again to delete','اضغط تاني للحذف'):'🗑'}</button></div>`).join('')||`<div class="empty">${T('No saved programs yet. Save one from step 6.','لا توجد برامج محفوظة. احفظ من الخطوة 6.')}</div>`}</div></div>`;
 }
 
 /* ============ price lists ============ */
@@ -1087,6 +1091,7 @@ function onInput(e){
   else if(d.room){p.rooms[d.room]=Math.max(0,Math.round(val));}
   else if(d.kid){const k=p.children.find(x=>x.id===d.kid); if(k) k.age=val;}
   else if(d.day){const [id,f]=d.day.split(':'), day=p.days.find(x=>x.id===id); if(!day) return; day[f]=val;
+    if(f==='city'&&p.days[0]===day) p.arrCity=val;
     if(f==='city') S.lists.tickets.filter(t=>t.auto&&t.city===val).forEach(t=>{if(!day.tix.includes(t.id)) day.tix.push(t.id);});
     if(el.tagName==='SELECT'){save(); renderStep(); refresh(); return;}}
   else if(d.trmode){const [did,tid]=d.trmode.split(':'), day=p.days.find(x=>x.id===did), t=day&&day.trans.find(x=>x.id===tid); if(t) t.mode=val;}
@@ -1120,7 +1125,7 @@ document.addEventListener('click',e=>{
     case 'lang': S.ui.lang=v; save(); renderShell(); break;
     case 'hide-sample': S.ui.sample=false; save(); renderShell(); break;
     case 'step': S.ui.step=num(v); save(); if(viewName()!=='program'){location.hash='program';} else {renderStepbar(); renderStep(); renderPanel(); const sb=$('#stepbar'); if(sb&&sb.getBoundingClientRect().top<0) window.scrollTo({top:window.scrollY+sb.getBoundingClientRect().top-8,behavior:reduceMotion()?'auto':'smooth'});} break;
-    case 'tpl': applyTpl(v); S.ui.open=null; save(); S.ui.step=v==='blank'?1:4; renderProgram(); break;
+    case 'tpl': applyTpl(v); S.ui.open=null; save(); S.ui.step=v==='blank'?1:3; renderProgram(); break;
     case 'pset': p[k]=(k==='plang'||k==='cur'||k==='status'||k==='profitMode')?v:+v; save(); if(viewName()==='settings'){renderSettings(); break;} renderStep(); refresh(); break;
     case 'sset': S.set[k]=isNaN(+v)?v:+v; save(); renderSettings(); break;
     case 'ui': S.ui[k]=v; save(); renderStep(); break;
@@ -1147,7 +1152,7 @@ document.addEventListener('click',e=>{
     case 'add-line': { const inp=$('#add-'+v); const t=inp&&inp.value.trim(); if(!t) break; (v==='in'?p.extraIn:p.extraEx).push(t); save(); renderStep(); break; }
     case 'save-file': { p.saved=todayIso(); const m=RES.main; const snap=clone(p); snap.sum=m?{v:m.cat.a.sellD/rateOf(p.cur),c:p.cur}:null; const i=S.files.findIndex(x=>x.id===p.id); if(i>=0) S.files[i]=snap; else S.files.push(snap); save(); renderStep(); renderStepbar(); const n=$('#saved-note'); if(n) n.textContent='💾 '+T('Saved to Files.','تم الحفظ في الملفات.'); break; }
     case 'new-prog': S.prog=blankProg(); S.ui.step=1; S.ui.open=null; S.ui.focus=null; lastBig=null; save(); if(viewName()==='program') renderView(); else location.hash='program'; break;
-    case 'file-open': { const f=S.files.find(x=>x.id===id); if(f){S.prog=clone(f); delete S.prog.sum; S.ui.step=7; S.ui.focus=null; lastBig=null; save(); location.hash='program';} break; }
+    case 'file-open': { const f=S.files.find(x=>x.id===id); if(f){S.prog=clone(f); delete S.prog.sum; S.ui.step=6; S.ui.focus=null; lastBig=null; save(); location.hash='program';} break; }
     case 'file-dup': { const f=S.files.find(x=>x.id===id); if(f){S.prog=clone(f); delete S.prog.sum; S.prog.id=uid(); S.prog.fileNo=nextFileNo(); S.prog.saved=null; S.prog.status='quote'; S.ui.step=1; lastBig=null; save(); location.hash='program';} break; }
     case 'file-del': if(S.ui.delArm!==id){S.ui.delArm=id; renderFiles(); setTimeout(()=>{if(S.ui.delArm===id){S.ui.delArm=null; if(viewName()==='files') renderFiles();}},4000); break;} S.files=S.files.filter(x=>x.id!==id); S.ui.delArm=null; save(); renderFiles(); break;
     case 'list': S.ui.list=v; save(); renderLists(); break;

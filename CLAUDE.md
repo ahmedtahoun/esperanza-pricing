@@ -25,7 +25,9 @@ Real price sheets for every list (hotels, cruises, flights, train, guides, reps,
 - `.cpanel.yml` — cPanel Git deployment: copies only `index.html`, the two app pages and `robots.txt` to the web folder. Add any new web file to its `cp` line.
 
 ## How the app works
-- 7-step wizard: 🧾 Client → 👥 People & rooms → 📅 Dates → 🗓️ Days → 🏨 Hotels & cruise → ✅ Included → 💾 Review & save. Live price panel beside it. Other views by hash: `#files`, `#lists`, `#settings`.
+- 6-step wizard: 🧾 Client → 👥 People & rooms → 📅 Dates & days → 🏨 Hotels & cruise → ✅ Included → 💾 Review & save. Live price panel beside it. Other views by hash: `#files`, `#lists`, `#settings`.
+  - Step 3 (Dates & days) = trip bar (arrival date, number of days, `tripSummary()` with dates, nights and high season) + the day cards. Day 1's city is the arrival city (`p.arrCity` follows it). Per-day 🔥 badges show only when the trip is partly in high season (`allPeak()`).
+  - Dates and Days were separate steps until Nov 2026; `load()` shifts an old saved step number (`ui.steps` marker).
 - Pricing per person = (shared costs ÷ paying people) + individual costs + room ÷ occupancy + misc % → profit (% or fixed) → round up. FOC: `floor(pax/focEvery)` free people; their costs and a single room go into shared costs. Transport VAT 14%. Vehicles chosen automatically (fewest or cheapest).
 - Key functions: `calcTier(pax)`, `compute()` (sets `RES`), `totals()`, `warnings()`, `inclItems()/exclItems()`, `clientView()`, `internalView()`, `renderPanel()`, `waText()`.
 - Text: every label is `T(english, arabic)`. RTL uses logical CSS properties. Numbers inside Arabic text use `.num`/`<bdi>`; group sizes like `20+1` go through `pl()` so they don't flip.
