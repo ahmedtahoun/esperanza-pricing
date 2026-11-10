@@ -69,6 +69,9 @@ input[type="number"],input[type="date"]{direction:ltr}
 .sg-l{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .sg-ar{color:var(--muted)}
 html[dir="rtl"] .sg-ar{transform:scaleX(-1);display:inline-block}
+.contact-box{display:flex;flex-direction:column;gap:3px;font-size:13px;background:var(--surface-2);border-radius:10px;padding:10px 12px}
+.contact-box .notes{white-space:pre-wrap;margin-top:4px}
+textarea{width:100%;resize:vertical}
 .iecard{border:1px solid var(--line);border-radius:12px;background:var(--surface);margin-bottom:14px;overflow:hidden}
 .iecard.open{border-color:var(--accent)}
 .ie-h{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;padding:10px 12px;text-align:start}
@@ -500,7 +503,7 @@ const trn=(rate,ret)=>({id:uid(),rate,ret:!!ret,mode:'auto'});
 const mkStay=(type,o)=>Object.assign({id:uid(),type,city:'cai',nights:1,a:'',b:'',label:''},o||{});
 function nextFileNo(){S.seq=(S.seq||0)+1;return `ESP-${new Date().getFullYear()}-${String(S.seq).padStart(3,'0')}`;}
 function blankProg(){
-  return {id:uid(),fileNo:nextFileNo(),status:'quote',client:'',agency:'',nat:'n_it',plang:'it',cur:'USD',adults:0,children:[],rooms:{sgl:0,dbl:0,tpl:0},focEvery:0,tiers:[],
+  return {id:uid(),fileNo:nextFileNo(),status:'quote',client:'',agency:'',agencyRef:'',contact:'',phone:'',email:'',validUntil:addD(todayIso(),14),preparedBy:S.set.preparedBy||'',notes:'',nat:'n_it',plang:'it',cur:'USD',adults:0,children:[],rooms:{sgl:0,dbl:0,tpl:0},focEvery:0,tiers:[],
     start:addD(todayIso(),45),arrCity:'cai',days:[],stays:[],hide:[],extraIn:[],extraEx:[],profitMode:S.set.profitMode,profit:S.set.profit,created:todayIso(),saved:null,tpl:null};
 }
 const TEMPLATES=[
@@ -856,6 +859,7 @@ function suggestCard(){
     <div class="sg-l">${sg.map(x=>`<span class="tag">${x.type==='cruise'?'🚢':x.type==='none'?'🚆':'🏨'} ${esc(stayLabel(x))} · <span class="num">${x.nights}</span> ${x.nights===1?T('night','ليلة'):T('nights','ليالي')}</span>`).join('<span class="sg-ar" aria-hidden="true">→</span>')}</div>
     <div class="row"><button class="btn primary small" type="button" data-act="stays-suggest">${T('Use this','استخدم الاقتراح')}</button><span class="help">${kept?T('Keeps the hotels you already chose. You can undo it.','بيحتفظ بالفنادق اللي اخترتها. وتقدر تتراجع.'):T('Then pick the hotel for each stay. You can undo it.','بعدها اختار الفندق لكل إقامة. وتقدر تتراجع.')}</span></div></div>`;
 }
+function waHref(ph){const d=String(ph||'').replace(/[^\d+]/g,'').replace(/^00/,'+').replace(/^\+/,''); return d.length>=8?'https://wa.me/'+d:'';}
 function renderStep(){
   const el=$('#step'); if(!el) return; const i=S.ui.step, p=P(); let h='';
   if(i===1){
@@ -863,15 +867,26 @@ function renderStep(){
     h+=`<div class="sect"><h3><span class="emo">⚡</span>${T('Start from a ready program','البدء من برنامج جاهز')}</h3><div class="tpls">${TEMPLATES.map(t=>tplBtn(t.id,icon(t.ico,24),T(t.n[0],t.n[1]),T(t.d[0],t.d[1]))).join('')}${tplBtn('blank','<span class="emo">📄</span>',T('Blank program','برنامج فاضي'),T('Build day by day','بناء يوم بيوم'))}</div>
       ${p.days.length?`<div class="help">${T('Choosing one replaces the days and stays of this program — you can undo it.','الاختيار يستبدل أيام وإقامة البرنامج الحالي — وتقدر تتراجع.')}</div>`:''}</div>
     <div class="sect"><div class="grid">
-      <div class="field"><label class="lbl" for="p-client">${T('Client or group name','اسم العميل أو المجموعة')}</label><input id="p-client" data-p="client" type="text" value="${esc(p.client)}"></div>
-      <div class="field"><label class="lbl" for="p-agency">${T('Agency','الوكالة')}</label><input id="p-agency" data-p="agency" type="text" value="${esc(p.agency)}"></div>
+      <div class="field"><label class="lbl" for="p-client">${T('Client or group name','اسم العميل أو المجموعة')}</label><input id="p-client" data-p="client" type="text" value="${esc(p.client)}" placeholder="${T('e.g. Rossi group','مثال: جروب روسي')}"></div>
+      <div class="field"><label class="lbl" for="p-agency">${T('Agency','الوكالة')}</label><input id="p-agency" data-p="agency" type="text" value="${esc(p.agency)}" placeholder="${T('e.g. Viaggi Sole','مثال: Viaggi Sole')}"></div>
+      <div class="field"><label class="lbl" for="p-agencyRef">${T('Agency’s reference','رقم ملف الوكالة')}</label><input id="p-agencyRef" data-p="agencyRef" type="text" value="${esc(p.agencyRef||'')}" placeholder="${T('Their file number','رقم الملف عندهم')}"></div>
       <div class="field"><span class="lbl">🛂 ${T('Nationality','الجنسية')}</span>${sel('data-p="nat"',S.lists.nats.map(n=>[n.id,n.nat]),p.nat,T('Nationality','الجنسية'))}</div>
       <div class="field"><span class="lbl">${T('File number (automatic)','رقم الملف (تلقائي)')}</span><div class="tag" style="padding:8px 10px"><span class="emo">🗂️</span><span class="num">${esc(p.fileNo)}</span></div></div>
-    </div>
-    <div class="grid">
+    </div></div>
+    <div class="sect"><h3><span class="emo">📇</span>${T('Contact at the agency','جهة الاتصال في الوكالة')} <span class="help" style="font-weight:400">· ${T('internal, not shown to the client','داخلي، لا يظهر للعميل')}</span></h3><div class="grid">
+      <div class="field"><label class="lbl" for="p-contact">${T('Contact person','اسم المسؤول')}</label><input id="p-contact" data-p="contact" type="text" autocomplete="off" value="${esc(p.contact||'')}"></div>
+      <div class="field"><label class="lbl" for="p-phone">📞 ${T('Phone / WhatsApp','التليفون / واتساب')}</label><div class="row" style="flex-wrap:nowrap"><input id="p-phone" data-p="phone" type="tel" dir="ltr" autocomplete="off" style="flex:1" value="${esc(p.phone||'')}" placeholder="+39 333 123 4567"><a class="btn small" id="wa-link" target="_blank" rel="noopener" ${waHref(p.phone)?`href="${waHref(p.phone)}"`:'hidden'}>💬 WhatsApp</a></div></div>
+      <div class="field"><label class="lbl" for="p-email">✉️ ${T('Email','الإيميل')}</label><input id="p-email" data-p="email" type="email" dir="ltr" autocomplete="off" value="${esc(p.email||'')}" placeholder="name@agency.it"></div>
+    </div></div>
+    <div class="sect"><div class="grid">
       <div class="field"><span class="lbl">🗣️ ${T('Program language (guide & documents)','لغة البرنامج (المرشد والملفات)')}</span>${segB('pset','plang',Object.keys(PLANGS).map(k=>[k,plangN(k)]),p.plang)}</div>
       <div class="field"><span class="lbl">💵 ${T('Price currency for the client','عملة السعر للعميل')}</span>${segB('pset','cur',CURS.map(c=>[c,`${FLAG[c]} ${curN(c)}`]),p.cur)}</div>
-    </div></div>`;
+    </div></div>
+    <div class="sect"><h3><span class="emo">📝</span>${T('Quote','عرض السعر')}</h3><div class="grid">
+      <div class="field"><label class="lbl" for="p-validUntil">⏳ ${T('Prices valid until','الأسعار سارية حتى')}</label><input id="p-validUntil" data-p="validUntil" type="date" value="${esc(p.validUntil||'')}"><span class="help">${T('Shown on the client document.','بيظهر في عرض العميل.')}</span></div>
+      <div class="field"><label class="lbl" for="p-preparedBy">👤 ${T('Prepared by','إعداد')}</label><input id="p-preparedBy" data-p="preparedBy" type="text" value="${esc(p.preparedBy||'')}" placeholder="${T('Your name','اسمك')}"></div>
+    </div>
+    <div class="field"><label class="lbl" for="p-notes">🗒️ ${T('Notes & special requests (internal)','ملاحظات وطلبات خاصة (داخلي)')}</label><textarea id="p-notes" data-p="notes" rows="3" placeholder="${T('Dietary needs, wheelchair access, room wishes, early check-in…','أكل خاص، كرسي متحرك، طلبات الغرف، دخول مبكر…')}">${esc(p.notes||'')}</textarea></div></div>`;
   }
   if(i===2){
     const rc=roomCheck();
@@ -1030,7 +1045,7 @@ function clientView(){
   const kids=m.cat.a.kids, inc=inclItems().filter(x=>!hidden(x.k)), exc=exclItems().filter(x=>!hidden(x.k)), op=optList();
   return `<div class="doc"><div class="doc-h">${PYR(34)}<div class="bn">Esperanza Travel<small>Esperanza viaggi egitto</small></div><div class="fn">${esc(p.fileNo)}<br>${fmtD(todayIso(),{day:'numeric',month:'short',year:'numeric'})}</div></div>
     <div class="doc-b">
-      <div><h3 style="margin:0 0 6px;font-size:18px">${esc(p.client||T('Program','البرنامج'))}</h3><div class="meta"><span>📅 ${fmtD(p.start,{day:'numeric',month:'short',year:'numeric'})} → ${fmtD(dayDate(Math.max(0,p.days.length-1)),{day:'numeric',month:'short',year:'numeric'})}</span><span>🗓️ ${p.days.length} ${T('days','أيام')} / ${Math.max(0,p.days.length-1)} ${T('nights','ليالي')}</span><span>👥 ${pl(p.adults,m.F)}${p.children.length?' + '+p.children.length+' '+T('children','أطفال'):''}</span><span>🗣️ ${plangN(p.plang)}</span></div></div>
+      <div><h3 style="margin:0 0 6px;font-size:18px">${esc(p.client||T('Program','البرنامج'))}</h3><div class="meta"><span>📅 ${fmtD(p.start,{day:'numeric',month:'short',year:'numeric'})} → ${fmtD(dayDate(Math.max(0,p.days.length-1)),{day:'numeric',month:'short',year:'numeric'})}</span><span>🗓️ ${p.days.length} ${T('days','أيام')} / ${Math.max(0,p.days.length-1)} ${T('nights','ليالي')}</span><span>👥 ${pl(p.adults,m.F)}${p.children.length?' + '+p.children.length+' '+T('children','أطفال'):''}</span><span>🗣️ ${plangN(p.plang)}</span>${p.validUntil?`<span>⏳ ${T('Prices valid until','الأسعار سارية حتى')} ${fmtD(p.validUntil,{day:'numeric',month:'short',year:'numeric'})}</span>`:''}</div></div>
       <div><h4>${T('Itinerary','البرنامج')}</h4><div class="itin">${itin}</div></div>
       ${hotels?`<div><h4>${T('Accommodation','الإقامة')}</h4><div class="tbl"><table><thead><tr><th>${T('Where','المكان')}</th><th>${T('Nights','الليالي')}</th><th><span class="ab">A</span>${T('Option A','الفئة A')}</th>${hasB?`<th><span class="ab b">B</span>${T('Option B','الفئة B')}</th>`:''}</tr></thead><tbody>${hotels}</tbody></table></div></div>`:''}
       <div><h4>${T('Prices per person','الأسعار للفرد')} (${curN(p.cur)})</h4>${hasB?`<div class="help" style="margin-bottom:4px"><span class="ab">A</span>${T('Option A','الفئة A')}</div>`:''}${priceTable('a')}${hasB?`<div class="help" style="margin:10px 0 4px"><span class="ab b">B</span>${T('Option B','الفئة B')}</div>${priceTable('b')}`:''}
@@ -1048,6 +1063,13 @@ function internalView(){
   const due=addD(p.start,-num(S.set.depositDays));
   return `<div class="card" style="display:flex;flex-direction:column;gap:14px">
     <h3>🔒 ${T('Internal summary — management only','ملخص داخلي — للإدارة فقط')} · <span class="num">${pl(m.Pay,m.F)}</span> · <span class="ab">A</span></h3>
+    ${p.contact||p.phone||p.email||p.agencyRef||p.preparedBy||p.notes?`<div class="contact-box">
+      ${p.agency||p.agencyRef?`<div>🏢 ${esc(p.agency||'')}${p.agencyRef?` · ${T('ref.','مرجع')} <span class="num">${esc(p.agencyRef)}</span>`:''}</div>`:''}
+      ${p.contact?`<div>📇 ${esc(p.contact)}</div>`:''}
+      ${p.phone?`<div>📞 <bdi dir="ltr">${esc(p.phone)}</bdi>${waHref(p.phone)?` · <a href="${waHref(p.phone)}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div>`:''}
+      ${p.email?`<div>✉️ <a href="mailto:${esc(p.email)}" dir="ltr">${esc(p.email)}</a></div>`:''}
+      ${p.preparedBy?`<div>👤 ${T('Prepared by','إعداد')} ${esc(p.preparedBy)}</div>`:''}
+      ${p.notes?`<div class="notes">🗒️ ${esc(p.notes)}</div>`:''}</div>`:''}
     <div class="kpis"><div class="kpi"><span>${T('Total selling price','إجمالي البيع')}</span><b>${money(t.revenue,true)}</b></div><div class="kpi"><span>${T('Total cost','إجمالي التكلفة')}</span><b>${money(t.cost,true)}</b></div><div class="kpi"><span>${T('Profit','الربح')}</span><b>${money(t.profit,true)}</b></div><div class="kpi"><span>${T('Margin','نسبة الربح')}</span><b>${t.revenue?Math.round(t.profit/t.revenue*100):0}%</b></div><div class="kpi"><span>${T('Deposit','العربون')} ${num(S.set.deposit)}%</span><b>${money(t.deposit,true)}</b></div><div class="kpi"><span>${T('Deposit due','موعد العربون')}</span><b style="font-family:var(--font-ui)">${fmtD(due,{day:'numeric',month:'short',year:'numeric'})}</b></div></div>
     <div class="tbl"><table><thead><tr><th>${T('Cost','التكلفة')}</th><th class="n">${T('Per paying person','للفرد')}</th><th class="n">${T('Whole group','للجروب')}</th></tr></thead><tbody>${rows}
       <tr class="tot"><td>${T('Cost per person (double)','التكلفة للفرد (مزدوج)')}</td><td class="n">${egpT(x.costD)}</td><td class="n">${egpT(x.costD*m.Pay)}</td></tr>
@@ -1109,6 +1131,7 @@ function waText(){
   const lines=[`*${p.client||T('Program','برنامج')}* — ${p.fileNo}`,`📅 ${fmtD(p.start,{day:'numeric',month:'short',year:'numeric'})} · ${p.days.length} ${T('days','أيام')}`,'',`*${T('Price per person','السعر للفرد')} (${curN(p.cur)})*`];
   RES.res.forEach(r=>{const a=r.cat.a,b=r.cat.b; lines.push(`• ${pl(r.Pay,r.F)}: ${T('double','مزدوج')} ${money(a.sellD,true)} · ${T('triple','ثلاثي')} ${money(a.sellT,true)} · ${T('single suppl.','ملحق فردي')} +${money(a.supp,true)}${r.hasB?` | B: ${money(b.sellD,true)}`:''}`);});
   m.cat.a.kids.forEach(k=>lines.push(`🧒 ${T('Child','طفل')} ${k.age}: ${k.price?money(k.price,true):T('free','مجاني')}`));
+  if(p.validUntil) lines.push('',`⏳ ${T('Prices valid until','الأسعار سارية حتى')} ${fmtD(p.validUntil,{day:'numeric',month:'short',year:'numeric'})}`);
   lines.push('',`✅ ${T('Included','يشمل')}:`); inclItems().filter(x=>!p.hide.includes(x.k)).forEach(x=>lines.push('– '+x.t));
   lines.push('',`❌ ${T('Not included','لا يشمل')}:`); exclItems().filter(x=>!p.hide.includes(x.k)).forEach(x=>lines.push('– '+x.t));
   lines.push('','Esperanza Travel');
@@ -1195,6 +1218,8 @@ function onInput(e){
     if(d.p==='ndays'){setDays(Math.max(1,Math.round(val))); save(); renderStep(); refresh(); return;}
     p[d.p]=(d.p==='adults'||d.p==='focEvery')?Math.max(0,Math.round(val)):val;
     if(d.p==='start'||d.p==='nat'||d.p==='arrCity'){ if(d.p==='arrCity'&&p.days[0]) p.days[0].city=val; save(); renderStep(); refresh(); return;}
+    if(d.p==='phone'){const a=$('#wa-link'), h=waHref(val); if(a){a.hidden=!h; if(h) a.href=h; else a.removeAttribute('href');}}
+    if(d.p==='preparedBy') S.set.preparedBy=val;
     if(d.p==='adults'&&S.ui.focus&&!tierList().includes(S.ui.focus)) S.ui.focus=null; }
   else if(d.room){p.rooms[d.room]=Math.max(0,Math.round(val));}
   else if(d.kid){const k=p.children.find(x=>x.id===d.kid); if(k) k.age=val;}
@@ -1217,7 +1242,7 @@ function onInput(e){
 }
 document.addEventListener('input',onInput); document.addEventListener('change',onInput);
 function setDays(n){const p=P(); while(p.days.length<n){const prev=p.days[p.days.length-1]; p.days.push(mkDay(prev?prev.city:p.arrCity));} if(p.days.length>n) p.days.length=n;}
-function applyTpl(id){const p=P(); p.hide=[]; if(id==='blank'){p.days=[mkDay(p.arrCity,{title:T('Arrival','الوصول')})]; p.stays=[]; Object.assign(p,{adults:0,children:[],rooms:{sgl:0,dbl:0,tpl:0},focEvery:0,tiers:[]}); S.ui.focus=null; p.tpl='blank'; return;} const t=TEMPLATES.find(x=>x.id===id); if(t){t.build(p); p.tpl=id;}}
+function applyTpl(id){const p=P(); p.hide=[]; if(id==='blank'){p.days=[mkDay(p.arrCity,{title:T('Arrival','الوصول')})]; p.stays=[]; Object.assign(p,{adults:0,children:[],rooms:{sgl:0,dbl:0,tpl:0},focEvery:0,tiers:[]}); if(EXAMPLE_CLIENTS.includes(p.client)){p.client=''; p.agency='';} S.ui.focus=null; p.tpl='blank'; return;} const t=TEMPLATES.find(x=>x.id===id); if(t){t.build(p); p.tpl=id;}}
 
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.target.id&&e.target.id.startsWith('add-')){e.preventDefault(); const b=document.querySelector(`[data-act="add-line"][data-v="${e.target.id.slice(4)}"]`); if(b) b.click();}
