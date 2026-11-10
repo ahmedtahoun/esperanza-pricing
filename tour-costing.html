@@ -1066,9 +1066,14 @@ let fxOpen=false;
 const fxChipTxt=()=>`<span class="emo">💱</span><span class="num">$${esc(S.fx.USD)} · €${esc(S.fx.EUR)}</span>`;
 let ieOpen=false;
 const travelOpen=new Set(); // days where staff tapped '+ flight' / '+ train' (not saved)
+// True once the program has something that costs money (not just the automatic water / extras).
+function hasServices(){const p=P();
+  return p.stays.some(x=>x.type!=='none'&&x.a)||p.days.some(d=>d.tix.length||d.trans.length||d.guide!=='none'||d.rep||d.lunch||d.dinner||d.flight||d.train||d.acts.length);}
 function renderPanel(){
   const el=$('#panel'); if(!el) return; const p=P();
   if(!RES.res.length){el.innerHTML=`<div class="empty">${T('Add the number of adults in step 2.','أدخل عدد الكبار في الخطوة 2.')}</div>`; $('#mbar').innerHTML=''; return;}
+  if(!hasServices()){el.innerHTML=`<div class="empty"><span class="emo" style="font-size:26px">🧮</span><br><b>${T('No price yet','لا يوجد سعر بعد')}</b><br>${T('Add visits, transport or a hotel to the days and the price per person appears here.','أضف مزارات أو نقل أو فندق للأيام وهيظهر السعر للفرد هنا.')}</div>`;
+    $('#mbar').innerHTML=`<span class="s">${T('No price yet — add services to the days.','لا يوجد سعر بعد — أضف خدمات للأيام.')}</span>`; return;}
   const fp=RES.res.find(r=>r.Pay===S.ui.focus)||RES.main, a=fp.cat.a, b=fp.cat.b, hasB=fp.hasB;
   const parts=BRK.map(x=>({v:a.brk[x[0]],col:x[4],e:x[1],l:T(x[2],x[3])})).filter(x=>x.v>0.0001);
   const total=a.sellD||1, mx=Math.max(...RES.res.map(r=>r.cat.a.sellD),1), W=RES.warns.filter(w=>w.t==='w');
