@@ -1,0 +1,1129 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Esperanza Program Pricing</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: Esperanza maroon + gold. A 7-step builder (step bar on top, one step at a time) beside a live price panel; Files, Price lists and Settings are separate views. Logical properties keep it right for Arabic (RTL). */
+:root{
+  --bg:#f3efe9; --surface:#ffffff; --surface-2:#f8f5f0; --ink:#1f1a17; --muted:#6b625b; --line:#e3dbd0;
+  --accent:#8e1b26; --accent-ink:#ffffff; --accent-soft:#f6e5e6; --gold:#b98a2e; --gold-soft:#f7eedb;
+  --marker-soft:rgba(201,154,58,.30);
+  --warn:#8a5300; --warn-soft:#fff0d2; --danger:#b3261e; --ok:#2e7d4f;
+  --pyr-1:#e2b14f; --pyr-2:#b8862b;
+  --c-trans:#0d6e74; --c-staff:#8a5aa8; --c-tix:#d4861a; --c-meal:#c4533a; --c-acc:#4b5bb8; --c-fly:#2f7fb5; --c-act:#3f8f4c; --c-extra:#8a9290; --c-foc:#b0577a; --c-profit:#c99a3a;
+  --font-ui:"IBM Plex Sans","IBM Plex Sans Arabic",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-ar:"IBM Plex Sans Arabic","IBM Plex Sans","Geeza Pro","Segoe UI",sans-serif;
+  --font-num:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141110; --surface:#1d1917; --surface-2:#25201d; --ink:#efe8e1; --muted:#a89d93; --line:#3a322d;
+  --accent:#e0808a; --accent-ink:#2a0b0f; --accent-soft:#3a1d21; --gold:#e0b75a; --gold-soft:#352a17;
+  --marker-soft:rgba(224,183,90,.20);
+  --warn:#f2b75e; --warn-soft:#352812; --danger:#ff8a80; --ok:#7fd1a0;
+  --pyr-1:#f0c264; --pyr-2:#c48e36;
+  --c-trans:#4cc3bf; --c-staff:#c49ae0; --c-tix:#f0b057; --c-meal:#ee8a72; --c-acc:#8e9bf0; --c-fly:#6fb6e6; --c-act:#78c785; --c-extra:#a3aaa8; --c-foc:#e08fb0; --c-profit:#e0b75a;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#141110; --surface:#1d1917; --surface-2:#25201d; --ink:#efe8e1; --muted:#a89d93; --line:#3a322d;
+  --accent:#e0808a; --accent-ink:#2a0b0f; --accent-soft:#3a1d21; --gold:#e0b75a; --gold-soft:#352a17;
+  --marker-soft:rgba(224,183,90,.20);
+  --warn:#f2b75e; --warn-soft:#352812; --danger:#ff8a80; --ok:#7fd1a0;
+  --pyr-1:#f0c264; --pyr-2:#c48e36;
+  --c-trans:#4cc3bf; --c-staff:#c49ae0; --c-tix:#f0b057; --c-meal:#ee8a72; --c-acc:#8e9bf0; --c-fly:#6fb6e6; --c-act:#78c785; --c-extra:#a3aaa8; --c-foc:#e08fb0; --c-profit:#e0b75a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:14px;line-height:1.5}
+html[lang="ar"] body{font-family:var(--font-ar);font-size:14.5px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1320px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 56px}
+.muted{color:var(--muted)} .help{font-size:12px;color:var(--muted)}
+.emo{font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;line-height:1;display:inline-block}
+.pyr{display:inline-block;vertical-align:middle}
+.num{font-family:var(--font-num);direction:ltr;unicode-bidi:isolate}
+input[type="number"],input[type="date"]{direction:ltr}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-block:16px 10px}
+.brand{display:flex;align-items:center;gap:10px;margin-inline-end:auto}
+.brand b{display:block;font-size:19px;font-weight:700;color:var(--accent);letter-spacing:-.01em;line-height:1.1}
+.brand small{display:block;font-size:11.5px;color:var(--gold);font-weight:600;letter-spacing:.04em}
+.tabs{display:flex;gap:3px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px;flex-wrap:wrap}
+.tabs a{padding:6px 12px;border-radius:999px;color:var(--muted);text-decoration:none;font-weight:500;font-size:13px;white-space:nowrap}
+.tabs a[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
+.fxbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:5px 10px}
+.fxbar label{display:flex;align-items:center;gap:5px;font-size:12.5px;white-space:nowrap}
+.fxbar input{width:4.6rem;padding:4px 6px}
+.sample{display:flex;gap:10px;align-items:center;background:var(--gold-soft);border-radius:10px;padding:8px 12px;font-size:12.5px;margin-bottom:10px;flex-wrap:wrap}
+.sample > span:nth-child(2){flex:1 1 260px}
+.sample b{color:var(--gold)}
+
+/* controls */
+input,select,textarea{font:inherit;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:7px 9px;min-width:0}
+input[type="number"]{font-family:var(--font-num);font-size:13px;text-align:right}
+input[type="checkbox"]{width:17px;height:17px;accent-color:var(--accent);margin:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 13px;border-radius:8px;font-weight:500;font-size:13px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#fff}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--danger)}
+.btn.small{padding:5px 10px;font-size:12.5px}
+.btn.dashed{border-style:dashed;color:var(--accent);background:transparent;justify-content:center;font-weight:600}
+.x{border:0;background:transparent;color:var(--muted);width:30px;height:30px;font-size:18px;line-height:1;display:grid;place-items:center;border-radius:6px;flex:none}
+.x:hover{color:var(--danger);background:var(--surface-2)}
+.ib{border:1px solid var(--line);background:var(--surface);border-radius:7px;width:30px;height:30px;display:grid;place-items:center;font-size:14px;color:var(--muted);flex:none}
+.ib:hover{border-color:var(--accent);color:var(--accent)}
+.seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:2px;gap:2px;max-width:100%;flex-wrap:wrap}
+.seg button{border:0;background:transparent;padding:5px 10px;border-radius:6px;font-size:12.5px;font-weight:500;color:var(--muted);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line),0 1px 2px rgba(0,0,0,.06)}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);overflow:hidden;direction:ltr;align-self:flex-start}
+.stepper button{border:0;background:transparent;width:30px;height:32px;font-size:16px;color:var(--muted)}
+.stepper button:hover{color:var(--accent);background:var(--accent-soft)}
+.stepper input{width:3.2rem;border:0;border-radius:0;background:transparent;text-align:center;padding:6px 2px}
+.lbl{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-bottom:4px}
+.field{display:flex;flex-direction:column;min-width:0}
+.field > input,.field > select{width:100%}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:12.5px}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink);font-weight:600}
+.chip .p{font-family:var(--font-num);font-size:11px;color:var(--muted);font-weight:500}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;background:var(--surface-2);border-radius:6px;padding:3px 8px;max-width:100%}
+.flag{display:inline-block;font-size:10.5px;font-weight:600;color:var(--gold);background:var(--gold-soft);border-radius:4px;padding:1px 6px;white-space:nowrap;vertical-align:middle;margin-inline-start:4px}
+.peak{display:inline-flex;gap:3px;align-items:center;font-size:11px;font-weight:600;color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent);border-radius:4px;padding:1px 6px;white-space:nowrap}
+.empty{border:1px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0}
+.card h3{margin:0 0 4px;font-size:15px;font-weight:600}
+.sect{display:flex;flex-direction:column;gap:14px}
+.sect + .sect{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.sect h3{margin:0;font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center}
+
+/* step bar */
+.stepbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;background:var(--bg);padding-block:6px 10px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.stepbar button{flex:1 0 auto;display:flex;align-items:center;gap:8px;padding:7px 11px;border-radius:11px;background:var(--surface);border:1px solid var(--line);text-align:start;min-width:0}
+.stepbar button:hover{border-color:var(--accent)}
+.stepbar button[aria-current="step"]{border-color:var(--accent);box-shadow:inset 0 -3px 0 var(--accent)}
+.stepbar .emo{font-size:18px}
+.stepbar b{display:block;font-size:12.5px;font-weight:600;white-space:nowrap}
+.stepbar small{display:block;font-size:11px;color:var(--muted);white-space:nowrap;max-width:9.5rem;overflow:hidden;text-overflow:ellipsis}
+.stepbar .ck{margin-inline-start:auto;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;border:1.5px solid var(--line);color:transparent;flex:none}
+.stepbar button.done .ck{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+@media (min-width:1120px){.layout{grid-template-columns:minmax(0,1fr) 400px;align-items:start}.panel{position:sticky;top:calc(env(safe-area-inset-top,0px) + 70px);max-height:calc(100vh - 86px);overflow-y:auto}}
+.step-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;min-width:0}
+.step-head{display:flex;gap:14px;align-items:center;margin-bottom:18px}
+.s-ico{flex:none;width:48px;height:48px;border-radius:14px;background:var(--accent-soft);display:grid;place-items:center;font-size:24px}
+.step-head h2{margin:0;font-size:18px;font-weight:700;text-wrap:balance}
+.step-head p{margin:2px 0 0;color:var(--muted);font-size:13px;max-width:65ch}
+.step-nav{display:flex;justify-content:space-between;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line);flex-wrap:wrap}
+
+/* templates */
+.tpls{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.tpl{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:start;border:1px solid var(--line);background:var(--surface-2);border-radius:12px;padding:12px}
+.tpl:hover{border-color:var(--gold);background:var(--gold-soft)}
+.tpl .emo{font-size:24px}
+.tpl b{font-size:13.5px}
+.tpl span{font-size:12px;color:var(--muted)}
+
+/* rooms/kids */
+.rooms{display:flex;flex-wrap:wrap;gap:12px}
+.room{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;min-width:9rem}
+.room b{font-size:13px}
+.check{display:flex;gap:8px;align-items:center;font-size:12.5px;border-radius:8px;padding:7px 10px}
+.check.ok{background:color-mix(in srgb,var(--ok) 12%,transparent);color:var(--ok)}
+.check.bad{background:var(--warn-soft);color:var(--warn)}
+.kids{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.kid{display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding-block:4px;padding-inline:10px 4px}
+.kid input{width:4rem;padding:4px 6px}
+
+/* calendar */
+.cal{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+.cal div{flex:none;width:80px;border:1px solid var(--line);border-radius:10px;padding:6px;text-align:center;background:var(--surface)}
+.cal div.pk{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 7%,var(--surface))}
+.cal b{display:block;font-size:11px;color:var(--muted)}
+.cal span{display:block;font-size:13px;font-weight:600}
+.cal small{display:block;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* day cards */
+.days{display:flex;flex-direction:column;gap:10px}
+.day{border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.day.open{border-color:var(--accent);box-shadow:0 2px 12px rgba(142,27,38,.08)}
+.day-h{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer}
+.day-n{flex:none;width:44px;text-align:center;border-radius:10px;background:var(--accent);color:var(--accent-ink);padding:4px 0;line-height:1.1}
+.day-n b{display:block;font-size:16px;font-family:var(--font-num)}
+.day-n small{display:block;font-size:10px;opacity:.85}
+.day-t{flex:1;min-width:0}
+.day-t b{display:flex;gap:6px;align-items:center;font-size:14px;flex-wrap:wrap}
+.day-t .d{font-size:12px;color:var(--muted)}
+.day-acts{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.day-sum{display:flex;flex-wrap:wrap;gap:5px;padding-block:0 10px;padding-inline:66px 12px}
+.day-ed{border-top:1px solid var(--line);padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;background:var(--surface-2)}
+.day-ed .full{grid-column:1/-1}
+.trl{display:flex;flex-direction:column;gap:6px}
+.tr-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:12.5px}
+.tr-row .n{flex:1 1 180px;min-width:0}
+.tr-row .v{font-size:11.5px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.vi{display:inline-flex;gap:2px;color:var(--c-trans);direction:ltr}
+
+/* stays */
+.stays{display:flex;flex-direction:column;gap:10px}
+.stay{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.stay-h{display:flex;align-items:center;gap:8px}
+.stay-h .ic{width:38px;height:38px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;font-size:19px;flex:none}
+.stay-h .t{flex:1;min-width:0}
+.stay-b{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;align-items:end}
+.stay .info{font-size:12px;color:var(--muted)}
+.ab{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:5px;font-size:11px;font-weight:700;background:var(--accent);color:var(--accent-ink);margin-inline-end:4px;vertical-align:middle}
+.ab.b{background:var(--gold);color:#fff}
+
+/* incl */
+.ie{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.ie ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.ie li label{display:flex;gap:8px;align-items:flex-start;font-size:13px;padding:4px 6px;border-radius:6px}
+.ie li label:hover{background:var(--surface-2)}
+.ie li.off label{color:var(--muted);text-decoration:line-through}
+.ie .add{display:flex;gap:6px;margin-top:8px}
+.ie .add input{flex:1}
+
+/* review */
+.warns{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.warns div{display:flex;gap:8px;align-items:flex-start;font-size:13px;border-radius:8px;padding:7px 10px}
+.warns .w{background:var(--warn-soft)}
+.warns .i{background:var(--surface-2)}
+.rv-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.doc{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.doc-h{background:var(--accent);color:var(--accent-ink);padding:16px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.doc-h .bn{font-size:20px;font-weight:700;letter-spacing:.01em}
+.doc-h .bn small{display:block;font-size:11px;font-weight:500;opacity:.85}
+.doc-h .fn{margin-inline-start:auto;text-align:end;font-size:12px;opacity:.9}
+.doc-b{padding:18px;display:flex;flex-direction:column;gap:18px}
+.doc h4{margin:0 0 8px;font-size:12.5px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid var(--gold);padding-bottom:4px}
+html[lang="ar"] .doc h4{letter-spacing:0;font-size:14px}
+.doc .meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px}
+.itin{display:flex;flex-direction:column;gap:8px}
+.itin > div{display:grid;grid-template-columns:5.5rem 1fr;gap:10px;font-size:13px}
+.itin > div > b{color:var(--accent)}
+.tbl{overflow-x:auto}
+.tbl table{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th,.tbl td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start}
+.tbl th{font-size:11.5px;color:var(--muted);font-weight:600;background:var(--surface-2)}
+.tbl td.n,.tbl th.n{text-align:end;font-family:var(--font-num);white-space:nowrap}
+.tbl tr.tot td{font-weight:700;border-top:2px solid var(--line)}
+.tbl tr.hl td{background:var(--marker-soft);font-weight:700}
+.lst{margin:0;padding-inline-start:18px;font-size:13px;display:flex;flex-direction:column;gap:3px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.kpi{background:var(--surface-2);border-radius:8px;padding:8px 10px}
+.kpi span{display:block;font-size:11px;color:var(--muted)}
+.kpi b{font-family:var(--font-num);font-size:15px;direction:ltr;display:block;text-align:start}
+
+/* panel */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.panel h2{margin:0;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+html[lang="ar"] .panel h2{letter-spacing:0;font-size:12.5px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tiers{display:flex;gap:4px;flex-wrap:wrap}
+.tiers button{border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:4px 10px;font-family:var(--font-num);font-size:12.5px;direction:ltr}
+.tiers button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.curs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.curs button{border:1px solid var(--line);background:var(--surface-2);border-radius:9px;padding:6px 8px;text-align:start;min-width:0}
+.curs button span{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);font-weight:600}
+.curs button b{display:block;font-family:var(--font-num);font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:start}
+.curs button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.big{display:flex;flex-direction:column;gap:2px}
+.big .v{font-family:var(--font-num);font-size:44px;font-weight:600;line-height:1.05;letter-spacing:-.02em;background:linear-gradient(transparent 58%,var(--marker-soft) 58%);align-self:flex-start;padding:0 4px;margin-inline-start:-4px;direction:ltr}
+.big .s{color:var(--muted);font-size:12.5px}
+.ptbl table{width:100%;border-collapse:collapse;font-size:13px}
+.ptbl th,.ptbl td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:start}
+.ptbl th{font-size:11px;color:var(--muted);font-weight:600}
+.ptbl td.n,.ptbl th.n{text-align:end;font-family:var(--font-num)}
+.donut-row{display:grid;grid-template-columns:120px minmax(0,1fr);gap:14px;align-items:center;margin-top:6px}
+.donut{position:relative;width:120px;height:120px}
+.donut .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.donut .c b{font-family:var(--font-num);font-size:16px}
+.donut .c span{font-size:10.5px;color:var(--muted)}
+.legend{display:flex;flex-direction:column;gap:3px}
+.legend div{display:grid;grid-template-columns:18px minmax(0,1fr) auto 2.4rem;gap:6px;align-items:center;font-size:12.5px}
+.legend .emo{font-size:13px;text-align:center}
+.legend .sw{display:inline-block;width:4px;height:12px;border-radius:2px;background:var(--c);margin-inline-end:5px;vertical-align:-1px}
+.legend b{font-family:var(--font-num);font-weight:500;text-align:end;direction:ltr}
+.legend small{font-family:var(--font-num);color:var(--muted);text-align:end}
+.bars{display:flex;gap:8px;align-items:flex-end;height:120px;margin-top:6px}
+.bars button{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;border:0;background:transparent;padding:0}
+.bars .bv{font-family:var(--font-num);font-size:11.5px;text-align:center;color:var(--muted);direction:ltr}
+.bars .bb{background:var(--accent-soft);border-radius:6px 6px 2px 2px;min-height:4px;transition:height .3s}
+.bars button[aria-pressed="true"] .bb{background:var(--accent)}
+.bars .bl{font-size:11.5px;text-align:center;color:var(--muted);font-family:var(--font-num);direction:ltr}
+.wbtn{display:flex;gap:8px;align-items:center;border:1px solid var(--warn);background:var(--warn-soft);border-radius:8px;padding:7px 10px;font-size:12.5px;text-align:start;width:100%}
+.panel-foot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
+.toast{font-size:12px;color:var(--ok);font-weight:600}
+.copybox{width:100%;min-height:140px;font-size:12.5px}
+.mbar{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;align-items:center;gap:12px;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(0,0,0,.08);padding-top:9px;padding-bottom:calc(9px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.mbar .v{font-family:var(--font-num);font-size:19px;font-weight:600;direction:ltr}
+.mbar .s{font-size:12px;color:var(--muted);flex:1}
+@media (min-width:1120px){.mbar{display:none}}
+@media (max-width:1119px){body{padding-bottom:70px}}
+@media (max-width:560px){.day-sum{padding-inline:12px}.day-h{flex-wrap:wrap}.day-acts{width:100%}}
+@media (max-width:460px){.donut-row{grid-template-columns:1fr}.donut{justify-self:center}.big .v{font-size:38px}.step-card{padding:14px}}
+
+/* lists, files, settings */
+.cattabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px}
+.cattabs button{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 11px;font-size:12.5px;font-weight:500}
+.cattabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.scroll{overflow-x:auto}
+.ltbl{width:100%;border-collapse:collapse;min-width:720px}
+.ltbl th{font-size:11px;color:var(--muted);text-align:start;padding:7px 5px;border-bottom:1px solid var(--line);font-weight:600;white-space:nowrap}
+.ltbl td{padding:4px 5px;border-bottom:1px solid var(--line);vertical-align:middle}
+.ltbl td input,.ltbl td select{width:100%;padding:5px 6px;font-size:12.5px}
+.ltbl td input[type="checkbox"]{width:17px}
+.ltbl td.w-n{width:6.2rem} .ltbl td.w-s{width:6rem} .ltbl td.w-c{width:4.8rem}
+.ltbl .grp td{background:var(--surface-2);font-weight:600;font-size:12.5px;padding:7px 6px}
+.files{display:flex;flex-direction:column;gap:8px}
+.file{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface)}
+.file .t{flex:1 1 220px;min-width:0}
+.file .t b{display:block}
+.file .t span{font-size:12px;color:var(--muted)}
+.st{display:inline-block;font-size:11.5px;font-weight:600;border-radius:999px;padding:2px 9px}
+.st.quote{background:var(--gold-soft);color:var(--gold)}
+.st.confirmed{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}
+.st.cancelled{background:var(--surface-2);color:var(--muted);text-decoration:line-through}
+.sets{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap" id="app"></div>
+
+<script>
+(function(){
+const LANG_DEFAULT='en';
+const SEED_AR=LANG_DEFAULT==='ar';
+const sn=(en,ar)=>SEED_AR?ar:en;
+
+/* ============ utilities ============ */
+let S;
+const isAr=()=>!!S&&S.ui.lang==='ar';
+const T=(en,ar)=>isAr()?ar:en;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const n=parseFloat(String(v??'').replace(/,/g,''));return isFinite(n)?n:0;};
+let uidN=Date.now(); const uid=()=>'k'+(uidN++).toString(36);
+const clone=o=>JSON.parse(JSON.stringify(o));
+const reduceMotion=()=>window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const pD=s=>{const a=String(s||'').split('-').map(Number);return new Date(Date.UTC(a[0]||2027,(a[1]||1)-1,a[2]||1));};
+const iso=d=>d.toISOString().slice(0,10);
+const addD=(s,n)=>{const d=pD(s);d.setUTCDate(d.getUTCDate()+n);return iso(d);};
+const todayIso=()=>{const d=new Date();return iso(new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())));};
+const fmtD=(s,o)=>pD(s).toLocaleDateString(isAr()?'ar-EG-u-nu-latn':'en-GB',Object.assign({timeZone:'UTC'},o||{weekday:'short',day:'numeric',month:'short'}));
+const WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const PYR=s=>`<svg class="pyr" width="${s}" height="${s}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 1.5 20.5h21z" style="fill:var(--pyr-1)"/><path d="M12 3.5l10.5 17h-7.3z" style="fill:var(--pyr-2)"/><path d="M6.5 12.4h4.2M4.6 15.6h6.1M8.3 9.2h2.9" style="stroke:var(--pyr-2);stroke-width:.9;opacity:.55"/></svg>`;
+const pl=(a,f)=>'\u2066'+a+(f?'+'+f:'')+'\u2069';
+const icon=(k,s)=>k==='pyr'?PYR(s||20):`<span class="emo">${k||'📍'}</span>`;
+
+/* ============ reference data ============ */
+const CITIES={cai:['Cairo','القاهرة','pyr'],alx:['Alexandria','الإسكندرية','🏛️'],lxr:['Luxor','الأقصر','🏺'],asw:['Aswan','أسوان','⛵'],nile:['On the Nile cruise','على الكروز','🚢'],hrg:['Hurghada','الغردقة','🏝️'],ssh:['Sharm El Sheikh','شرم الشيخ','🤿'],fay:['Fayoum','الفيوم','🌴'],wd:['White Desert','الصحراء البيضاء','🏜️'],oth:['Other','أخرى','📍']};
+const cityN=c=>CITIES[c]?(isAr()?CITIES[c][1]:CITIES[c][0]):(c||'—');
+const cityI=c=>CITIES[c]?CITIES[c][2]:'📍';
+const PLANGS={ar:['Arabic','عربي','العربية'],it:['Italian','إيطالي','الإيطالية'],es:['Spanish','إسباني','الإسبانية'],en:['English','إنجليزي','الإنجليزية']};
+const plangN=l=>PLANGS[l]?(isAr()?PLANGS[l][1]:PLANGS[l][0]):l;
+const VEH=['limo','hiace','coaster','bus','jeep'];
+const VN={limo:['Limousine','ليموزين'],hiace:['Hiace','هايس'],coaster:['Coaster','كوستر'],bus:['Bus','أتوبيس'],jeep:['4×4 Jeep','جيب 4×4']};
+const vName=(v,n)=>isAr()?VN[v][1]:(n>1?(v==='bus'?'Buses':VN[v][0]+'s'):VN[v][0]);
+const CURS=['USD','EUR','EGP']; const SYM={USD:'$',EUR:'€'}; const FLAG={USD:'🇺🇸',EUR:'🇪🇺',EGP:'🇪🇬'};
+const curN=c=>c==='EGP'?T('EGP','ج.م'):c;
+const TGROUPS={air:['Airport','المطار','✈️'],cai:['Cairo tours','جولات القاهرة','pyr'],out:['Outside Cairo','خارج القاهرة','🛣️'],long:['Long transfers','توصيلات بعيدة','🏝️'],extra:['Extras','إضافات','🌙']};
+const BRK=[['trans','🚌','Transport','النقل','--c-trans'],['staff','🧭','Guide & rep','المرشد والمندوب','--c-staff'],['tix','🎟️','Entrance tickets','تذاكر الدخول','--c-tix'],['meals','🍽️','Meals','الوجبات','--c-meal'],['acc','🏨','Hotel / cruise','الفندق / الكروز','--c-acc'],['fly','✈️','Flights & train','الطيران والقطار','--c-fly'],['act','⛵','Activities','الأنشطة','--c-act'],['extra','💧','Water & extras','المياه والإضافات','--c-extra'],['foc','🎁','Free places','الأماكن المجانية','--c-foc'],['profit','💰','Profit','الربح','--c-profit']];
+
+const RATES=[
+ ['r1','air','transfer','مطار / سهرة / محطة — الهرم / وسط البلد','Airport, evening or station — Giza & Downtown','airport',1485,2145,4730],
+ ['r2','air','transfer','مطار / سهرة / محطة — الكوربة / التجمع','Airport, evening or station — Heliopolis & New Cairo','airport',1650,2475,5225],
+ ['r3','air','transfer','مطار العاصمة / مطار سفنكس','Capital or Sphinx airport','airport',2475,3465,7150],
+ ['r11','air','day','مطار / يومية / مطار','Airport + day tour + airport','day',4015,5995,12320],
+ ['r4','cai','day','نص يومية — الهرم / وسط البلد','Half day — Giza & Downtown','day',1780,2915,5335],
+ ['r5','cai','day','نص يومية — الكوربة / التجمع','Half day — Heliopolis & New Cairo','day',2035,3300,6325],
+ ['r6','cai','day','يومية — الهرم / وسط البلد','Full day — Giza & Downtown','day',2530,3850,7590],
+ ['r7','cai','day','يومية — الكوربة / التجمع','Full day — Heliopolis & New Cairo','day',3025,4565,8745],
+ ['r8','cai','day','يومية دهشور من الهرم / وسط البلد','Full day Dahshur (from Giza / Downtown)','day',3025,4565,8745],
+ ['r9','cai','day','جولة بلد','City tour','day',2530,3850,7590],
+ ['r10','cai','day','عشاء بعد اليومية أو السهرة','Dinner run after day tour / evening','none',770,1100,2365],
+ ['r12','out','transfer','توصيلة إسكندرية / الفيوم / وادي الريان / بورسعيد','Transfer — Alexandria / Fayoum / Wadi El Rayan / Port Said','day',5225,8250,14575],
+ ['r13','out','day','يومية إسكندرية / الفيوم / وادي الريان / بورسعيد','Day trip — Alexandria / Fayoum / Wadi El Rayan / Port Said','day',5830,9130,14500,1],
+ ['r14','out','transfer','توصيلة رأس سدر','Transfer — Ras Sudr','day',5500,8800,13800],
+ ['r15','out','day','يومية رأس سدر','Day trip — Ras Sudr','day',6050,9900,15300],
+ ['r16','out','transfer','توصيلة السويس / السخنة قبل بورتو / الإسماعيلية / المنصورة','Transfer — Suez / Sokhna before Porto / Ismailia / Mansoura','day',4180,7150,10500,1],
+ ['r17','out','day','يومية السويس / السخنة قبل بورتو / الإسماعيلية / المنصورة','Day trip — Suez / Sokhna before Porto / Ismailia / Mansoura','day',4785,8250,12200,1],
+ ['r18','out','transfer','توصيلة العين السخنة حتى الجلالة','Transfer — Ain Sokhna up to Galala','day',5500,8580,15180,1],
+ ['r19','out','day','يومية العين السخنة حتى الجلالة','Day trip — Ain Sokhna up to Galala','day',5775,9020,17050,1],
+ ['r28','out','day','يومية الصحراء البيضاء بالجيب 4×4','White Desert day by 4×4 jeep','day',0,0,0,2,6000],
+ ['r20','long','transfer','توصيلة الساحل حتى سيدي عبد الرحمن','Transfer — North Coast up to Sidi Abdel Rahman','hrg',7975,11990,22770],
+ ['r21','long','transfer','توصيلة مطروح / الغردقة','Transfer — Marsa Matrouh / Hurghada','hrg',8745,12650,27500],
+ ['r22','long','transfer','توصيلة شرم الشيخ / طابا','Transfer — Sharm El Sheikh / Taba','ssh',10450,15180,32450,1],
+ ['r23','long','transfer','توصيلة دهب / سفاجا','Transfer — Dahab / Safaga','ssh',13365,19525,41195],
+ ['r24','long','day','دهب / كاترين / طابا 1/2','Dahab / St Catherine / Taba — 1/2','taba1',16665,24365,49995,1],
+ ['r25','long','day','دهب / كاترين / طابا 2/2','Dahab / St Catherine / Taba — 2/2','taba2',13915,20900,40150,1],
+ ['r26','long','transfer','توصيلة مرسى علم / أسوان / الأقصر','Transfer — Marsa Alam / Aswan / Luxor','hrg',19250,29150,55000],
+ ['r27','extra','day','اليوم المبيت خارج القاهرة','Extra day — vehicle stays overnight outside Cairo','none',3300,4950,8800],
+];
+
+const COL={lang:['Language','اللغة'],city:['City','المدينة'],full:['Full day','يوم كامل'],half:['Half day','نص يوم'],cur:['Currency','العملة'],peak:['High season +%','زيادة الذروة %'],name:['Name','الاسم'],phone:['Phone','التليفون'],service:['Service','الخدمة'],price:['Price','السعر'],stars:['Stars','النجوم'],cat:['Category','الفئة'],meal:['Meals','الوجبات'],sgl:['Single','فردي'],dbl:['Double','مزدوج'],tpl:['Triple','ثلاثي'],child:['Child','طفل'],route:['Route','خط السير'],nights:['Nights','الليالي'],cabin:['Cabin','الكابينة'],departs:['Sails on (Mon,Fri…)','أيام الإبحار (Mon,Fri…)'],from:['From','من'],to:['To','إلى'],adult:['Adult','كبير'],student:['Student / child','طالب / طفل'],auto:['Always with city','تلقائي مع المدينة'],lunch:['Lunch','غداء'],dinner:['Dinner','عشاء'],unit:['Priced per','السعر لكل'],cap:['People per boat','عدد الأفراد للمركب'],tips:['Tips per person','البقشيش للفرد'],visa:['Visa per person','التأشيرة للفرد'],nat:['Nationality','الجنسية']};
+const OPTS={service:{meet:['Meet (arrival)','استقبال'],farewell:['Farewell (departure)','توديع']},stars:{3:['3★','3★'],4:['4★','4★'],5:['5★','5★']},cat:{A:['A','A'],B:['B','B']},meal:{BB:['BB – breakfast','BB – إفطار'],HB:['HB – half board','HB – نصف إقامة'],FB:['FB – full board','FB – إقامة كاملة']},cabin:{std:['Standard','عادية'],upper:['Upper deck','Upper Deck'],suite:['Suite','جناح']},unit:{pax:['Per person','للفرد'],boat:['Per boat','للمركب']}};
+const optN=(f,k)=>OPTS[f]&&OPTS[f][k]?T(OPTS[f][k][0],OPTS[f][k][1]):k;
+const LISTS={
+ guides:{ico:'🧭',n:['Guides','المرشدين'],unit:['Per day, shared by the group','لليوم، ويتقسم على الأفراد'],cols:[['lang','plang'],['city','city'],['full','num'],['half','num'],['cur','cur'],['peak','pct'],['name','text'],['phone','text']]},
+ reps:{ico:'🧑‍💼',n:['Reps','المندوبين'],unit:['Per service, shared by the group','للخدمة، ويتقسم على الأفراد'],cols:[['city','city'],['service','sel'],['price','num'],['cur','cur'],['name','text'],['phone','text']]},
+ hotels:{ico:'🏨',n:['Hotels','الفنادق'],unit:['Per room per night','للغرفة في الليلة'],cols:[['name','text'],['city','city'],['stars','sel'],['cat','sel'],['meal','sel'],['sgl','num'],['dbl','num'],['tpl','num'],['child','num'],['cur','cur'],['peak','pct']]},
+ cruises:{ico:'🚢',n:['Nile cruises','الكروز'],unit:['Per person per night','للفرد في الليلة'],cols:[['name','text'],['stars','sel'],['route','text'],['nights','num'],['cabin','sel'],['departs','text'],['dbl','num'],['sgl','num'],['tpl','num'],['cur','cur'],['peak','pct']]},
+ flights:{ico:'✈️',n:['Domestic flights','الطيران الداخلي'],unit:['Per person','للفرد'],cols:[['from','text'],['to','text'],['price','num'],['cur','cur'],['peak','pct']]},
+ trains:{ico:'🚆',n:['Sleeper train','قطار النوم'],unit:['Per person','للفرد'],cols:[['from','text'],['to','text'],['sgl','num'],['dbl','num'],['cur','cur'],['peak','pct']]},
+ tickets:{ico:'🎟️',n:['Entrance tickets','تذاكر الدخول'],unit:['Per person','للفرد'],cols:[['name','text'],['city','city'],['adult','num'],['student','num'],['cur','cur'],['auto','chk']]},
+ rests:{ico:'🍽️',n:['Restaurants','المطاعم'],unit:['Per person','للفرد'],cols:[['name','text'],['city','city'],['lunch','num'],['dinner','num'],['cur','cur'],['peak','pct']]},
+ acts:{ico:'⛵',n:['Activities & boats','الأنشطة والمراكب'],unit:['Per boat or per person','للمركب أو للفرد'],cols:[['name','text'],['city','city'],['unit','sel'],['price','num'],['cap','num'],['cur','cur']]},
+ opts:{ico:'⭐',n:['Optional tours','الرحلات الاختيارية'],unit:['Selling price per person, not in the program price','سعر البيع للفرد، خارج سعر البرنامج'],cols:[['name','text'],['city','city'],['price','num'],['cur','cur']]},
+ nats:{ico:'🛂',n:['Tips & visa','البقشيش والتأشيرة'],unit:['Per person, shown under “Not included”','للفرد، يُكتب في «لا يشمل»'],cols:[['nat','text'],['tips','num'],['visa','num'],['cur','cur']]}
+};
+const LIST_ORDER=['transport','guides','reps','hotels','cruises','flights','trains','tickets','rests','acts','opts','nats'];
+
+function seedLists(){
+  const mk=(id,o)=>Object.assign({id,sample:true},o), C=sn;
+  return {
+   guides:[['it','cai',2000,1200],['es','cai',2000,1200],['en','cai',1500,900],['ar','cai',1000,600],['it','alx',1800,1100],['es','alx',1800,1100],['en','alx',1400,850],['it','lxr',1800,1100],['es','lxr',1800,1100],['en','lxr',1400,850],['it','asw',1700,1000],['es','asw',1700,1000],['en','asw',1400,850],['it','nile',1700,1000],['es','nile',1700,1000],['en','nile',1400,850]].map((r,i)=>mk('g'+i,{lang:r[0],city:r[1],full:r[2],half:r[3],cur:'EGP',peak:0,name:'',phone:''})),
+   reps:[['cai','meet',500],['cai','farewell',400],['lxr','meet',400],['lxr','farewell',300],['asw','meet',400],['asw','farewell',300],['hrg','meet',400],['hrg','farewell',300]].map(r=>mk('rp_'+r[0]+'_'+r[1][0],{city:r[0],service:r[1],price:r[2],cur:'EGP',name:'',phone:''})),
+   hotels:[
+    ['h_cai_a',C('Cairo 5★ – pyramids view','القاهرة 5★ – إطلالة الأهرامات'),'cai',5,'A','BB',120,140,185,30],
+    ['h_cai_b',C('Cairo 4★ – Giza','القاهرة 4★ – الجيزة'),'cai',4,'B','BB',70,85,115,20],
+    ['h_alx_a',C('Alexandria 5★ – seafront','الإسكندرية 5★ – على البحر'),'alx',5,'A','BB',95,110,150,25],
+    ['h_alx_b',C('Alexandria 4★','الإسكندرية 4★'),'alx',4,'B','BB',65,80,105,20],
+    ['h_lxr_a',C('Luxor 5★ – Nile view','الأقصر 5★ – إطلالة النيل'),'lxr',5,'A','HB',100,120,160,25],
+    ['h_lxr_b',C('Luxor 4★','الأقصر 4★'),'lxr',4,'B','HB',60,75,100,15],
+    ['h_asw_a',C('Aswan 5★','أسوان 5★'),'asw',5,'A','HB',110,130,170,30],
+    ['h_asw_b',C('Aswan 4★','أسوان 4★'),'asw',4,'B','HB',65,80,105,20],
+    ['h_hrg_a',C('Hurghada 5★ resort','الغردقة 5★ منتجع'),'hrg',5,'A','FB',130,150,200,35],
+    ['h_hrg_b',C('Hurghada 4★ resort','الغردقة 4★ منتجع'),'hrg',4,'B','FB',85,100,135,25]
+   ].map(r=>mk(r[0],{name:r[1],city:r[2],stars:r[3],cat:r[4],meal:r[5],sgl:r[6],dbl:r[7],tpl:r[8],child:r[9],cur:'USD',peak:20})),
+   cruises:[
+    ['c_la5',C('Nile cruise 5★','كروز نيلي 5★'),5,C('Luxor → Aswan','من الأقصر إلى أسوان'),4,'std','Mon,Fri',75,115,68],
+    ['c_la5u',C('Nile cruise 5★','كروز نيلي 5★'),5,C('Luxor → Aswan','من الأقصر إلى أسوان'),4,'upper','Mon,Fri',90,135,82],
+    ['c_al5',C('Nile cruise 5★','كروز نيلي 5★'),5,C('Aswan → Luxor','من أسوان إلى الأقصر'),3,'std','Fri',75,115,68],
+    ['c_la4',C('Nile cruise 4★','كروز نيلي 4★'),4,C('Luxor → Aswan','من الأقصر إلى أسوان'),4,'std','Mon,Fri',50,75,45],
+    ['c_al4',C('Nile cruise 4★','كروز نيلي 4★'),4,C('Aswan → Luxor','من أسوان إلى الأقصر'),3,'std','Fri',50,75,45]
+   ].map(r=>mk(r[0],{name:r[1],stars:r[2],route:r[3],nights:r[4],cabin:r[5],departs:r[6],dbl:r[7],sgl:r[8],tpl:r[9],cur:'USD',peak:20})),
+   flights:[['f_cai_lxr','Cairo','القاهرة','Luxor','الأقصر',95],['f_cai_asw','Cairo','القاهرة','Aswan','أسوان',110],['f_asw_cai','Aswan','أسوان','Cairo','القاهرة',110],['f_lxr_cai','Luxor','الأقصر','Cairo','القاهرة',95],['f_hrg_cai','Hurghada','الغردقة','Cairo','القاهرة',90],['f_cai_ssh','Cairo','القاهرة','Sharm El Sheikh','شرم الشيخ',90],['f_ssh_cai','Sharm El Sheikh','شرم الشيخ','Cairo','القاهرة',90]].map(r=>mk(r[0],{from:C(r[1],r[2]),to:C(r[3],r[4]),price:r[5],cur:'USD',peak:15})),
+   trains:[['tr_cai_asw','Cairo','القاهرة','Aswan','أسوان',140,100],['tr_cai_lxr','Cairo','القاهرة','Luxor','الأقصر',130,95],['tr_asw_cai','Aswan','أسوان','Cairo','القاهرة',140,100],['tr_lxr_cai','Luxor','الأقصر','Cairo','القاهرة',130,95]].map(r=>mk(r[0],{from:C(r[1],r[2]),to:C(r[3],r[4]),sgl:r[5],dbl:r[6],cur:'USD',peak:0})),
+   tickets:[
+    ['t_gem',C('Grand Egyptian Museum (GEM)','المتحف المصري الكبير'),'cai',1600,800,0,1],['t_pyr',C('Giza Pyramids & Sphinx','أهرامات الجيزة وأبو الهول'),'cai',1000,500,0,1],['t_isl',C('Islamic Cairo & Citadel','القاهرة الإسلامية والقلعة'),'cai',750,380,0,1],
+    ['t_mus',C('Egyptian Museum (Tahrir)','المتحف المصري بالتحرير'),'cai',550,280],['t_saq',C('Saqqara','سقارة'),'cai',600,300],
+    ['t_qbay',C('Qaitbay Citadel','قلعة قايتباي'),'alx',300,150,1],['t_lib',C('Bibliotheca Alexandrina (panoramic)','مكتبة الإسكندرية (زيارة بانورامية)'),'alx',0,0,1],['t_jew',C('Royal Jewelry Museum','متحف المجوهرات الملكية'),'alx',300,150,1],['t_kom',C('Kom El Shoqafa','كوم الشقافة'),'alx',300,150,1],
+    ['t_kar',C('Karnak Temple','معبد الكرنك'),'lxr',600,300],['t_lxt',C('Luxor Temple','معبد الأقصر'),'lxr',500,250],['t_vok',C('Valley of the Kings','وادي الملوك'),'lxr',750,380],['t_hat',C('Hatshepsut Temple','معبد حتشبسوت'),'lxr',440,220],
+    ['t_phi',C('Philae Temple','معبد فيلة'),'asw',550,280],['t_dam',C('High Dam','السد العالي'),'asw',200,100],['t_obe',C('Unfinished Obelisk','المسلة الناقصة'),'asw',200,100],
+    ['t_kmb',C('Kom Ombo Temple','معبد كوم أمبو'),'nile',300,150],['t_edf',C('Edfu Temple','معبد إدفو'),'nile',450,230]
+   ].map(r=>{const o=mk(r[0],{name:r[1],city:r[2],adult:r[3],student:r[4],cur:'EGP',auto:!!r[5]}); if(r[6]){o.sample=false;o.paper=true;} return o;}),
+   rests:[['rs_cai_pyr',C('Lunch near the Pyramids','غداء قرب الأهرامات'),'cai',1500,0,1],['rs_cai_nile',C('Nile-view restaurant','مطعم على النيل'),'cai',1200,1600],['rs_alx',C('Seafood restaurant','مطعم مأكولات بحرية'),'alx',1500,1800],['rs_lxr',C('Local restaurant','مطعم محلي'),'lxr',800,1000],['rs_asw',C('Nubian restaurant','مطعم نوبي'),'asw',800,1000],['rs_fay',C('Fayoum lunch','غداء الفيوم'),'fay',900,0]].map(r=>{const o=mk(r[0],{name:r[1],city:r[2],lunch:r[3],dinner:r[4],cur:'EGP',peak:0}); if(r[5]){o.sample=false;o.paper=true;} return o;}),
+   acts:[['a_fel_asw',C('Felucca ride (1 hour)','ركوب فلوكة (ساعة)'),'asw','boat',800,15,'EGP'],['a_mb_asw',C('Motorboat to Philae','موتور بوت إلى فيلة'),'asw','boat',600,20,'EGP'],['a_fel_lxr',C('Felucca ride','ركوب فلوكة'),'lxr','boat',700,15,'EGP'],['a_camp',C('Desert camping night','تخييم في الصحراء'),'wd','pax',60,0,'USD'],['a_yacht',C('Yacht trip','رحلة يخت'),'hrg','pax',20,0,'EUR']].map(r=>mk(r[0],{name:r[1],city:r[2],unit:r[3],price:r[4],cap:r[5],cur:r[6]})),
+   opts:[['o_abs',C('Abu Simbel by road','أبو سمبل بالأتوبيس'),'asw',120],['o_sl_pyr',C('Sound & Light – Pyramids','الصوت والضوء – الأهرامات'),'cai',35],['o_bal',C('Hot-air balloon','رحلة المنطاد'),'lxr',140],['o_nub',C('Nubian village','القرية النوبية'),'asw',35],['o_din',C('Dinner cruise on the Nile','عشاء على مركب نيلي'),'cai',45],['o_sl_kar',C('Sound & Light – Karnak','الصوت والضوء – الكرنك'),'lxr',35]].map(r=>mk(r[0],{name:r[1],city:r[2],price:r[3],cur:'USD'})),
+   nats:[['n_it',C('Italy','إيطاليا'),40,45],['n_es',C('Spain','إسبانيا'),40,45],['n_uk',C('United Kingdom','بريطانيا'),60,50],['n_us',C('USA','أمريكا'),60,50],['n_ot',C('Other','أخرى'),50,50]].map(r=>mk(r[0],{nat:r[1],tips:r[2],visa:r[3],cur:'USD'}))
+  };
+}
+function defaults(L){
+  return {
+    v:4, seq:0,
+    fx:{USD:55,EUR:60}, fxDate:null,
+    set:{profitMode:'pct',profit:10,round:5,vatOn:true,vat:14,driverTips:false,staff:0,policy:'fewest',
+      bands:[{to:1.99,pct:0},{to:5.99,pct:30},{to:11.99,pct:50}],
+      seasons:[{name:sn('Christmas & New Year','الكريسماس ورأس السنة'),from:'12-20',to:'01-06'},{name:sn('Easter','عيد الفصح'),from:'04-01',to:'04-20'}],
+      gala:{on:true,amt:75,cur:'USD'}, water:{amt:20,cur:'EGP'}, miscPct:0, deposit:30, depositDays:30, focEvery:20},
+    caps:{limo:3,hiace:12,coaster:21,bus:50,jeep:4},
+    dtips:{limo:{airport:100,day:150,hrg:300,ssh:400,taba1:500,taba2:600},hiace:{airport:150,day:200,hrg:500,ssh:600,taba1:850,taba2:1050},coaster:{airport:200,day:350,hrg:600,ssh:750,taba1:1100,taba2:1450},bus:{airport:250,day:450,hrg:750,ssh:850,taba1:1200,taba2:1200},jeep:{airport:0,day:300,hrg:0,ssh:0,taba1:0,taba2:0}},
+    rates:RATES.map(r=>({id:r[0],g:r[1],kind:r[2],ar:r[3],en:r[4],tip:r[5],p:{limo:0,hiace:r[6],coaster:r[7],bus:r[8],jeep:r[10]||0},check:r[9]===1,sample:r[9]===2})),
+    lists:seedLists(),
+    prog:null, files:[],
+    ui:{lang:L,step:1,open:null,focus:null,view:'client',list:'transport',sample:true}
+  };
+}
+
+/* ============ programs & templates ============ */
+const mkDay=(city,o)=>Object.assign({id:uid(),city,title:'',tix:[],trans:[],guide:'none',rep:'',lunch:'',dinner:'',flight:'',train:'',acts:[],opts:[]},o||{});
+const trn=(rate,ret)=>({id:uid(),rate,ret:!!ret,mode:'auto'});
+const mkStay=(type,o)=>Object.assign({id:uid(),type,city:'cai',nights:1,a:'',b:'',label:''},o||{});
+function nextFileNo(){S.seq=(S.seq||0)+1;return `ESP-${new Date().getFullYear()}-${String(S.seq).padStart(3,'0')}`;}
+function blankProg(){
+  return {id:uid(),fileNo:nextFileNo(),status:'quote',client:'',agency:'',nat:'n_it',plang:'it',cur:'USD',adults:20,children:[],rooms:{sgl:0,dbl:10,tpl:0},focEvery:S.set.focEvery,tiers:[25,30],
+    start:addD(todayIso(),45),arrCity:'cai',days:[],stays:[],hide:[],extraIn:[],extraEx:[],profitMode:S.set.profitMode,profit:S.set.profit,created:todayIso(),saved:null,tpl:null};
+}
+const TEMPLATES=[
+ {id:'ca',ico:'pyr',n:['Cairo + Alexandria','القاهرة + الإسكندرية'],d:['4 days · 3 nights','4 أيام · 3 ليالي'],build(p){
+   p.days=[mkDay('cai',{title:sn('Arrival','الوصول'),rep:'rp_cai_m',trans:[trn('r1')]}),
+     mkDay('cai',{tix:['t_pyr','t_gem'],trans:[trn('r6')],guide:'full',lunch:'rs_cai_pyr',opts:['o_sl_pyr']}),
+     mkDay('alx',{title:sn('Day trip to Alexandria','يومية الإسكندرية'),tix:['t_qbay','t_lib','t_jew','t_kom'],trans:[trn('r13')],guide:'full',lunch:'rs_alx'}),
+     mkDay('cai',{title:sn('Islamic Cairo & departure','القاهرة الإسلامية والسفر'),tix:['t_isl'],trans:[trn('r4'),trn('r1')],guide:'half',rep:'rp_cai_f'})];
+   p.stays=[mkStay('hotel',{city:'cai',nights:3,a:'h_cai_a',b:'h_cai_b'})];}},
+ {id:'cc',ico:'🚢',n:['Nile cruise + Cairo','كروز + القاهرة'],d:['8 days · 7 nights','8 أيام · 7 ليالي'],build(p){
+   p.days=[mkDay('cai',{title:sn('Arrival','الوصول'),rep:'rp_cai_m',trans:[trn('r1')]}),
+     mkDay('cai',{tix:['t_pyr','t_gem'],trans:[trn('r6')],guide:'full',lunch:'rs_cai_pyr',opts:['o_sl_pyr']}),
+     mkDay('lxr',{title:sn('Fly to Luxor, embark','الطيران للأقصر والصعود للكروز'),flight:'f_cai_lxr',trans:[trn('r1')],rep:'rp_lxr_m',tix:['t_kar','t_lxt'],guide:'full'}),
+     mkDay('lxr',{title:sn('West Bank','البر الغربي'),tix:['t_vok','t_hat'],guide:'full',opts:['o_bal']}),
+     mkDay('nile',{title:sn('Sailing to Aswan','الإبحار إلى أسوان'),tix:['t_edf','t_kmb'],guide:'full'}),
+     mkDay('asw',{tix:['t_phi','t_dam'],acts:['a_mb_asw','a_fel_asw'],guide:'full',opts:['o_abs','o_nub']}),
+     mkDay('cai',{title:sn('Fly back to Cairo','الطيران للقاهرة'),flight:'f_asw_cai',rep:'rp_asw_f',trans:[trn('r1')],tix:['t_isl'],guide:'half'}),
+     mkDay('cai',{title:sn('Departure','السفر'),rep:'rp_cai_f',trans:[trn('r1')]})];
+   p.stays=[mkStay('hotel',{city:'cai',nights:2,a:'h_cai_a',b:'h_cai_b'}),mkStay('cruise',{nights:4,a:'c_la5',b:'c_la4'}),mkStay('hotel',{city:'cai',nights:1,a:'h_cai_a',b:'h_cai_b'})];}},
+ {id:'ce',ico:'🏺',n:['Classic Egypt','مصر الكلاسيكية'],d:['10 days · 9 nights','10 أيام · 9 ليالي'],build(p){
+   p.days=[mkDay('cai',{title:sn('Arrival','الوصول'),rep:'rp_cai_m',trans:[trn('r1')]}),
+     mkDay('cai',{tix:['t_pyr','t_gem'],trans:[trn('r6')],guide:'full',lunch:'rs_cai_pyr'}),
+     mkDay('cai',{title:sn('Old Cairo, night train to Aswan','القاهرة القديمة وقطار النوم لأسوان'),tix:['t_isl','t_mus'],trans:[trn('r6')],guide:'full',train:'tr_cai_asw'}),
+     mkDay('asw',{title:sn('Aswan, embark','أسوان والصعود للكروز'),tix:['t_phi','t_dam'],acts:['a_mb_asw'],guide:'full',rep:'rp_asw_m',opts:['o_abs']}),
+     mkDay('nile',{tix:['t_kmb','t_edf'],guide:'full'}),
+     mkDay('lxr',{tix:['t_kar','t_lxt'],guide:'full',opts:['o_sl_kar']}),
+     mkDay('lxr',{title:sn('West Bank, drive to Hurghada','البر الغربي والسفر للغردقة'),tix:['t_vok','t_hat'],guide:'full',rep:'rp_lxr_f',opts:['o_bal']}),
+     mkDay('hrg',{title:sn('Free day','يوم حر'),acts:['a_yacht']}),
+     mkDay('hrg',{title:sn('Free day','يوم حر')}),
+     mkDay('cai',{title:sn('Fly to Cairo, departure','الطيران للقاهرة والسفر'),flight:'f_hrg_cai',trans:[trn('r1')],rep:'rp_cai_f'})];
+   p.stays=[mkStay('hotel',{city:'cai',nights:2,a:'h_cai_a',b:'h_cai_b'}),mkStay('none',{nights:1,label:sn('Night on the sleeper train','ليلة في قطار النوم')}),mkStay('cruise',{nights:3,a:'c_al5',b:'c_al4'}),mkStay('hotel',{city:'hrg',nights:3,a:'h_hrg_a',b:'h_hrg_b'})];}}
+];
+
+/* ============ state ============ */
+const KEY='esperanza-pricing.v4.'+LANG_DEFAULT;
+function load(){
+  let s=null; try{s=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){}
+  if(s&&s.v===4&&s.prog&&s.lists) return s;
+  const d=defaults(LANG_DEFAULT);
+  let old=null; try{old=JSON.parse(localStorage.getItem('group-tour-costing.v3.'+LANG_DEFAULT)||'null');}catch(e){}
+  if(old&&old.rates){
+    if(old.fx) d.fx=old.fx;
+    if(old.caps) Object.assign(d.caps,old.caps);
+    const byId=Object.fromEntries(old.rates.map(r=>[r.id,r]));
+    d.rates=d.rates.map(r=>byId[r.id]?Object.assign({},r,{en:byId[r.id].en,ar:byId[r.id].ar,kind:byId[r.id].kind,tip:byId[r.id].tip,p:Object.assign({},r.p,byId[r.id].p)}):r)
+      .concat(old.rates.filter(r=>!d.rates.some(x=>x.id===r.id)).map(r=>Object.assign({},r,{p:Object.assign({limo:0,jeep:0},r.p)})));
+    if(old.tips) Object.keys(old.tips).forEach(v=>d.dtips[v]=Object.assign({},d.dtips[v]||{},old.tips[v]));
+    if(old.quote){['vat','vatOn','policy','staff'].forEach(k=>{if(old.quote[k]!==undefined) d.set[k]=old.quote[k];}); d.set.driverTips=!!old.quote.tipsOn;}
+  }
+  S=d; const p=blankProg(); TEMPLATES[1].build(p); p.client=sn('Example – Rossi group (Italy)','مثال – جروب روسي (إيطاليا)'); p.agency=sn('Example agency','وكالة تجريبية'); p.tpl='cc'; d.prog=p;
+  return d;
+}
+S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const P=()=>S.prog;
+const L=(cat,id)=>(S.lists[cat]||[]).find(r=>r.id===id);
+const rateById=id=>S.rates.find(r=>r.id===id);
+
+/* ============ money ============ */
+const rateOf=c=>c==='EGP'?1:Math.max(num(S.fx[c]),0.0001);
+function fmtIn(v,c,whole){const d=(!whole&&Math.abs(v)<10&&Math.abs(v)>0.0001)?1:0; const s=v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); return c==='EGP'?s+' '+curN('EGP'):SYM[c]+s;}
+const money=(egp,whole,c)=>{c=c||P().cur;return fmtIn(egp/rateOf(c),c,whole);};
+const egpT=v=>`${Math.round(v).toLocaleString('en-US')} ${curN('EGP')}`;
+function roundUp(egp,c){c=c||P().cur;const u=rateOf(c),st=Math.max(num(S.set.round),0.01)*(c==='EGP'?10:1);return Math.ceil((egp/u)/st-1e-9)*st*u;}
+
+/* ============ seasons ============ */
+function isPeak(dIso){const md=dIso.slice(5);return (S.set.seasons||[]).some(s=>s.from&&s.to&&(s.from<=s.to?(md>=s.from&&md<=s.to):(md>=s.from||md<=s.to)));}
+const dayDate=i=>addD(P().start,i);
+function pv(row,f,dIso){if(!row) return 0; let v=num(row[f]); if(dIso&&isPeak(dIso)&&num(row.peak)>0) v*=1+num(row.peak)/100; return v*rateOf(row.cur||'EGP');}
+
+/* ============ calculation ============ */
+let fleetCache={};
+function fleet(seats,rate,mode){
+  const key=rate.id+'|'+seats+'|'+mode+'|'+S.set.policy; if(fleetCache[key]!==undefined) return fleetCache[key];
+  const Pp=rate.p||{},C=S.caps, ok=v=>num(Pp[v])>0&&num(C[v])>0; let best=null;
+  if(mode!=='auto'){ if(ok(mode)){const n=Math.ceil(seats/num(C[mode]));best={counts:{[mode]:n},cost:n*num(Pp[mode]),n,cap:n*num(C[mode])};} return fleetCache[key]=best; }
+  const av=['jeep','bus','coaster','hiace','limo'].filter(ok); if(!av.length) return fleetCache[key]=null;
+  const last=av[av.length-1], heads=av.slice(0,-1);
+  const rec=(i,counts,cap)=>{
+    if(i===heads.length){const rem=Math.max(0,seats-cap), n=Math.ceil(rem/num(C[last])); const c=Object.assign({},counts,{[last]:n});
+      const ks=Object.keys(c), tot=ks.reduce((a,v)=>a+c[v],0), cost=ks.reduce((a,v)=>a+c[v]*num(Pp[v]),0), cp=ks.reduce((a,v)=>a+c[v]*num(C[v]),0);
+      if(tot===0&&seats>0) return;
+      const better=!best||(S.set.policy==='cheapest'?(cost<best.cost||(cost===best.cost&&tot<best.n)):(tot<best.n||(tot===best.n&&cost<best.cost)));
+      if(better) best={counts:c,cost,n:tot,cap:cp}; return;}
+    const v=heads[i], mx=Math.ceil(Math.max(0,seats-cap)/num(C[v]));
+    for(let k=0;k<=mx;k++) rec(i+1,Object.assign({},counts,{[v]:k}),cap+k*num(C[v]));
+  };
+  rec(0,{},0); return fleetCache[key]=best;
+}
+const fleetTxt=f=>VEH.filter(v=>f.counts[v]).map(v=>f.counts[v]+' '+vName(v,f.counts[v])).join(' + ');
+function vehSvg(v,s){const W={limo:20,hiace:24,coaster:32,bus:44,jeep:22}[v];let w='';const wins=Math.floor((W-8)/5);for(let i=0;i<wins;i++) w+=`<rect x="${4+i*5}" y="4" width="3.5" height="3.5" rx=".6" style="fill:var(--surface)"/>`;s=s||1;
+  return `<svg width="${W*s}" height="${16*s}" viewBox="0 0 ${W} 16" aria-hidden="true"><rect x=".5" y="${v==='limo'?4:1.5}" width="${W-1}" height="${v==='limo'?8:10.5}" rx="2.5" fill="currentColor"/>${v==='limo'?'':w}<circle cx="5.5" cy="13" r="2.4" style="fill:var(--ink);stroke:var(--surface);stroke-width:1"/><circle cx="${W-5.5}" cy="13" r="2.4" style="fill:var(--ink);stroke:var(--surface);stroke-width:1"/></svg>`;}
+const fleetIco=(f,max,s)=>{let o='',n=0;['bus','coaster','hiace','jeep','limo'].forEach(v=>{for(let i=0;i<(f.counts[v]||0)&&n<(max||5);i++,n++) o+=vehSvg(v,s);});return o;};
+function guideFor(city){const g=S.lists.guides, l=P().plang; return g.find(r=>r.lang===l&&r.city===city)||g.find(r=>r.lang===l&&r.city==='cai')||null;}
+function natRow(){return L('nats',P().nat)||S.lists.nats[0];}
+function nightStays(){const out=[];P().stays.forEach(s=>{for(let i=0;i<num(s.nights);i++) out.push(s);});return out;}
+function stayRow(s,which){const id=(which==='b'&&s.b)?s.b:s.a; return s.type==='hotel'?L('hotels',id):s.type==='cruise'?L('cruises',id):null;}
+function bandFor(age){const b=(S.set.bands||[]).slice().sort((x,y)=>num(x.to)-num(y.to));for(const x of b) if(age<=num(x.to)) return x; return null;}
+
+function calcTier(Pay){
+  const p=P(), F=num(p.focEvery)>0?Math.floor(Pay/num(p.focEvery)):0;
+  const kidsSeat=p.children.filter(k=>num(k.age)>=2).length, trav=Pay+F+kidsSeat, seats=trav+Math.max(0,num(S.set.staff));
+  const sh={trans:0,staff:0,act:0}, pp={tix:0,meals:0,fly:0,act:0,water:0,gala:0}; const lines={}; let dtips=0;
+  p.days.forEach((d,i)=>{
+    const dt=dayDate(i);
+    d.trans.forEach(t=>{const r=rateById(t.rate); if(!r){lines[t.id]=null;return;} const f=fleet(seats,r,t.mode), m=(t.ret&&r.kind==='transfer')?2:1; lines[t.id]=f?{f,m,cost:f.cost*m}:null;
+      if(f){sh.trans+=f.cost*m; if(r.tip&&r.tip!=='none') dtips+=VEH.reduce((a,v)=>a+(f.counts[v]||0)*num((S.dtips[v]||{})[r.tip]),0)*m;}});
+    if(d.guide!=='none'){const g=guideFor(d.city); if(g) sh.staff+=pv(g,d.guide==='half'?'half':'full',dt);}
+    if(d.rep) sh.staff+=pv(L('reps',d.rep),'price',dt);
+    d.tix.forEach(id=>pp.tix+=pv(L('tickets',id),'adult',dt));
+    if(d.lunch) pp.meals+=pv(L('rests',d.lunch),'lunch',dt);
+    if(d.dinner) pp.meals+=pv(L('rests',d.dinner),'dinner',dt);
+    if(d.flight) pp.fly+=pv(L('flights',d.flight),'price',dt);
+    if(d.train) pp.fly+=pv(L('trains',d.train),'dbl',dt);
+    d.acts.forEach(id=>{const a=L('acts',id); if(!a) return; if(a.unit==='boat') sh.act+=Math.ceil(trav/Math.max(1,num(a.cap)))*pv(a,'price',dt); else pp.act+=pv(a,'price',dt);});
+    pp.water+=num(S.set.water.amt)*rateOf(S.set.water.cur);
+  });
+  if(S.set.vatOn) sh.trans*=1+num(S.set.vat)/100;
+  if(S.set.driverTips) sh.trans+=dtips;
+  const ns=nightStays(); let gala=false;
+  ns.forEach((s,n)=>{if(dayDate(n).slice(5)==='12-31'&&S.set.gala.on) gala=true;});
+  if(gala) pp.gala=num(S.set.gala.amt)*rateOf(S.set.gala.cur);
+  const perP=Object.values(pp).reduce((a,b)=>a+b,0);
+  const hasB=p.stays.some(s=>s.b&&s.b!==s.a);
+  const acc={};
+  ['a','b'].forEach(c=>{const o={dbl:0,tpl:0,sgl:0};
+    ns.forEach((s,n)=>{const r=stayRow(s,c), dt=dayDate(n); if(!r) return;
+      if(s.type==='hotel'){o.dbl+=pv(r,'dbl',dt)/2; o.tpl+=(num(r.tpl)>0?pv(r,'tpl',dt)/3:pv(r,'dbl',dt)/2); o.sgl+=pv(r,'sgl',dt);}
+      else {o.dbl+=pv(r,'dbl',dt); o.tpl+=num(r.tpl)>0?pv(r,'tpl',dt):pv(r,'dbl',dt); o.sgl+=num(r.sgl)>0?pv(r,'sgl',dt):pv(r,'dbl',dt);}});
+    acc[c]=o;});
+  const misc=1+num(S.set.miscPct)/100, pm=p.profitMode, pr=num(p.profit), unit=rateOf(p.cur);
+  const prof=x=>pm==='pct'?x*(1+pr/100):x+pr*unit;
+  const cat={};
+  ['a','b'].forEach(c=>{
+    const A=acc[c], foc=F*(perP+A.sgl), shared=sh.trans+sh.staff+sh.act+foc, base=shared/Pay+perP;
+    const costD=(base+A.dbl)*misc, costT=(base+A.tpl)*misc, suppC=Math.max(0,(A.sgl-A.dbl))*misc;
+    const sellD=roundUp(prof(costD)), sellT=roundUp(prof(costT)), supp=roundUp(pm==='pct'?suppC*(1+pr/100):suppC);
+    const kids=p.children.map(k=>{const b=bandFor(num(k.age)), pct=b?num(b.pct):100; return {age:num(k.age),pct,price:pct===0?0:roundUp(sellD*pct/100)};});
+    const brk={trans:sh.trans/Pay,staff:sh.staff/Pay,tix:pp.tix,meals:pp.meals,acc:A.dbl,fly:pp.fly,act:sh.act/Pay+pp.act,extra:pp.water+pp.gala+(misc-1)*(base+A.dbl),foc:foc/Pay};
+    brk.profit=Math.max(0,sellD-Object.values(brk).reduce((a,b)=>a+b,0));
+    cat[c]={acc:A,foc,shared,costD,costT,suppC,sellD,sellT,supp,kids,brk};
+  });
+  return {Pay,F,trav,seats,lines,sh,pp,perP,hasB,gala,cat};
+}
+function tierList(){const p=P();return [...new Set([num(p.adults),...p.tiers.map(num)])].filter(n=>n>0).sort((a,b)=>a-b);}
+function totals(R,c){
+  const p=P(), x=R.cat[c], r=p.rooms, tplP=3*num(r.tpl);
+  const kidsRev=x.kids.reduce((a,k)=>a+k.price,0);
+  const revenue=R.Pay*x.sellD+num(r.sgl)*x.supp+tplP*(x.sellT-x.sellD)+kidsRev;
+  const pf=p.profitMode==='pct'?1+num(p.profit)/100:1;
+  const cost=R.Pay*x.costD+num(r.sgl)*x.suppC+tplP*(x.costT-x.costD)+kidsRev/pf;
+  return {revenue,cost,profit:revenue-cost,deposit:revenue*num(S.set.deposit)/100,kidsRev};
+}
+let RES=null;
+function compute(){fleetCache={}; const Tl=tierList(); const res=Tl.map(calcTier); const main=res.find(x=>x.Pay===num(P().adults))||res[0]||null; RES={res,main}; RES.warns=warnings(main); return RES;}
+
+function warnings(main){
+  const p=P(), out=[]; const w=(t,m)=>out.push({t,m});
+  const cap=num(p.rooms.sgl)+2*num(p.rooms.dbl)+3*num(p.rooms.tpl);
+  if(cap!==num(p.adults)) w('w',T(`Rooms hold ${cap} people but there are ${p.adults} adults.`,`الغرف تسع ${cap} فرد والكبار ${p.adults}.`));
+  const nights=p.stays.reduce((a,s)=>a+num(s.nights),0), need=Math.max(0,p.days.length-1);
+  if(p.days.length&&nights!==need) w('w',T(`Stays cover ${nights} nights; the program needs ${need}.`,`الإقامة تغطي ${nights} ليالي والبرنامج يحتاج ${need}.`));
+  p.stays.forEach(s=>{if(s.type!=='none'&&!s.a) w('w',T('A stay has no hotel or cruise chosen.','في إقامة بدون فندق أو كروز.'));});
+  let n0=0; p.stays.forEach(s=>{ if(s.type==='cruise'){const r=L('cruises',s.a); if(r&&r.departs){const wd=WD[pD(dayDate(n0)).getUTCDay()].toLowerCase(); const ok=String(r.departs).split(/[ ,،]+/).map(x=>x.trim().slice(0,3).toLowerCase()).includes(wd); if(!ok) w('w',T(`The cruise “${r.name}” sails on ${r.departs}, but boarding is on ${fmtD(dayDate(n0),{weekday:'long',day:'numeric',month:'short'})}.`,`الكروز «${r.name}» يبحر يوم ${r.departs} والصعود يوم ${fmtD(dayDate(n0),{weekday:'long',day:'numeric',month:'short'})}.`));}} n0+=num(s.nights);});
+  p.days.forEach((d,i)=>{ if(d.guide!=='none'&&!guideFor(d.city)) w('w',T(`Day ${i+1}: no ${plangN(p.plang)} guide price for ${cityN(d.city)}.`,`اليوم ${i+1}: لا يوجد سعر مرشد ${plangN(p.plang)} في ${cityN(d.city)}.`));
+    if(main) d.trans.forEach(t=>{ if(main.lines[t.id]===null) w('w',T(`Day ${i+1}: no price for the chosen vehicle.`,`اليوم ${i+1}: لا يوجد سعر للعربية المختارة.`));});});
+  const pk=p.days.filter((d,i)=>isPeak(dayDate(i))).length;
+  if(pk) w('i',T(`🔥 ${pk} day(s) fall in high season — high-season prices are used.`,`🔥 ${pk} يوم في موسم الذروة — يتم استخدام أسعار الذروة.`));
+  if(main&&main.gala) w('i',T(`🎉 The trip includes 31 December — Gala Dinner added (${fmtIn(num(S.set.gala.amt),S.set.gala.cur,true)} per person).`,`🎉 الرحلة فيها ليلة 31 ديسمبر — تمت إضافة Gala Dinner (${fmtIn(num(S.set.gala.amt),S.set.gala.cur,true)} للفرد).`));
+  if(main&&main.F) w('i',T(`🎁 ${main.F} free place(s) (1 per ${p.focEvery}); their cost is shared by the ${main.Pay} paying people.`,`🎁 ${main.F} مكان مجاني (1 لكل ${p.focEvery})، وتكلفته موزعة على ${main.Pay} فرد.`));
+  return out;
+}
+
+/* includes / excludes */
+const sep=()=>isAr()?'، ':', ';
+function optList(){const p=P(),seen={},o=[];p.days.forEach(d=>d.opts.forEach(id=>{const r=L('opts',id); if(r&&!seen[id]){seen[id]=1;o.push(r);}}));return o;}
+function inclItems(){
+  const p=P(), out=[]; const add=(k,t)=>out.push({k,t}); const seen={};
+  p.stays.forEach(s=>{
+    if(s.type==='hotel'){const a=L('hotels',s.a), b=s.b&&s.b!==s.a?L('hotels',s.b):null; if(!a) return; const meal=optN('meal',a.meal);
+      add('st-'+s.id,T(`${s.nights} night(s) in ${cityN(s.city)}: ${a.name} (or similar), ${meal}`,`${s.nights} ليلة في ${cityN(s.city)}: ${a.name} (أو ما يماثله)، ${meal}`)+(b?T(` — option B: ${b.name} (or similar)`,` — الفئة B: ${b.name} (أو ما يماثله)`):''));}
+    else if(s.type==='cruise'){const a=L('cruises',s.a); if(!a) return; add('st-'+s.id,T(`${s.nights} night(s) on the ${a.name}, ${a.route} (or similar), full board`,`${s.nights} ليالي على ${a.name}، ${a.route} (أو ما يماثله)، إقامة كاملة`));}
+  });
+  if(p.days.some(d=>d.rep)) add('rep',T('Meet & assist at the airports by our representative','استقبال ومساعدة في المطارات بواسطة مندوبنا'));
+  if(p.days.some(d=>d.trans.length)) add('trans',T('All transfers and tours by modern air-conditioned vehicle','جميع التنقلات والجولات بسيارات حديثة مكيفة'));
+  if(p.days.some(d=>d.guide!=='none')) add('guide',T(`${plangN(p.plang)}-speaking Egyptologist guide during the visits`,`مرشد سياحي متخصص باللغة ${PLANGS[p.plang]?PLANGS[p.plang][2]:''} أثناء الزيارات`));
+  const tix=[]; p.days.forEach(d=>d.tix.forEach(id=>{const r=L('tickets',id); if(r&&!seen[id]){seen[id]=1;tix.push(r.name);}}));
+  if(tix.length) add('tix',T('Entrance fees: ','رسوم الدخول: ')+tix.join(sep()));
+  const lu=p.days.filter(d=>d.lunch).length, di=p.days.filter(d=>d.dinner).length;
+  if(lu||di) add('meals',T(`Meals as per program: ${lu} lunch(es)${di?`, ${di} dinner(s)`:''}`,`الوجبات حسب البرنامج: ${lu} غداء${di?`، ${di} عشاء`:''}`));
+  const fl=p.days.filter(d=>d.flight).map(d=>L('flights',d.flight)).filter(Boolean);
+  if(fl.length) add('fly',T('Domestic flights: ','الطيران الداخلي: ')+fl.map(f=>`${f.from} → ${f.to}`).join(sep()));
+  const tr=p.days.filter(d=>d.train).map(d=>L('trains',d.train)).filter(Boolean);
+  if(tr.length) add('train',T('Sleeper train: ','قطار النوم: ')+tr.map(f=>`${f.from} → ${f.to}`).join(sep()));
+  const ac=[]; p.days.forEach(d=>d.acts.forEach(id=>{const r=L('acts',id); if(r&&!seen[id]){seen[id]=1;ac.push(r.name);}}));
+  if(ac.length) add('acts',ac.join(sep()));
+  if(num(S.set.water.amt)>0) add('water',T('Mineral water on the bus','مياه معدنية في الأتوبيس'));
+  if(RES&&RES.main&&RES.main.gala) add('gala',T('Gala Dinner on 31 December','عشاء الـ Gala ليلة 31 ديسمبر'));
+  p.extraIn.forEach((t,i)=>add('xi'+i,t));
+  return out;
+}
+function exclItems(){
+  const p=P(), out=[]; const add=(k,t)=>out.push({k,t}); const n=natRow();
+  add('intl',T('International flights','الطيران الدولي'));
+  if(n){add('visa',T(`Entry visa (${fmtIn(num(n.visa),n.cur,true)} per person)`,`تأشيرة الدخول (${fmtIn(num(n.visa),n.cur,true)} للفرد)`)); add('tips',T(`Tips (${fmtIn(num(n.tips),n.cur,true)} per person, recommended)`,`البقشيش (${fmtIn(num(n.tips),n.cur,true)} للفرد)`));}
+  const op=optList(); if(op.length) add('opts',T('Optional tours: ','الرحلات الاختيارية: ')+op.map(o=>`${o.name} (${fmtIn(num(o.price),o.cur,true)})`).join(sep()));
+  add('drinks',T('Drinks during meals','المشروبات أثناء الوجبات'));
+  add('personal',T('Personal expenses and anything not listed under “Included”','المصاريف الشخصية وأي شيء غير مذكور في «يشمل»'));
+  p.extraEx.forEach((t,i)=>add('xe'+i,t));
+  return out;
+}
+
+/* ============ shell ============ */
+const STEPS=[['🧾','Client','العميل'],['👥','People & rooms','الأفراد والغرف'],['📅','Dates','التواريخ'],['🗓️','Days','الأيام'],['🏨','Hotels & cruise','الإقامة'],['✅','Included','يشمل / لا يشمل'],['💾','Review & save','المراجعة والحفظ']];
+function viewName(){const h=(location.hash||'').slice(1);return ['program','files','lists','settings'].includes(h)?h:'program';}
+function renderShell(){
+  const ar=isAr(); document.documentElement.lang=ar?'ar':'en'; document.documentElement.dir=ar?'rtl':'ltr'; document.title=T('Esperanza Program Pricing','تسعير برامج إسبيرانزا');
+  $('#app').innerHTML=`
+  <header class="top">
+    <div class="brand">${PYR(34)}<div><b>Esperanza</b><small>${T('PROGRAM PRICING','تسعير البرامج')}</small></div></div>
+    <div class="fxbar" role="group" aria-label="${T('Exchange rates','أسعار العملات')}"><span class="emo">💱</span>
+      ${['USD','EUR'].map(c=>`<label for="fx-${c}"><span class="emo">${FLAG[c]}</span>1 ${c} =<input id="fx-${c}" data-fx="${c}" type="number" min="0.01" step="0.01" value="${esc(S.fx[c])}">${curN('EGP')}</label>`).join('')}</div>
+    <div class="seg" role="group" aria-label="Language / اللغة"><button type="button" data-act="lang" data-v="en" aria-pressed="${!ar}">English</button><button type="button" data-act="lang" data-v="ar" aria-pressed="${ar}">عربي</button></div>
+    <nav class="tabs">${[['program','🧮',T('Program','البرنامج')],['files','📁',T('Files','الملفات')],['lists','📋',T('Price lists','قوائم الأسعار')],['settings','⚙️',T('Settings','الإعدادات')]].map(([k,e,n])=>`<a href="#${k}"><span class="emo">${e}</span> ${n}</a>`).join('')}</nav>
+  </header>
+  ${S.ui.sample?`<div class="sample"><span class="emo">🏷️</span><span><b>${T('Sample prices','أسعار تجريبية')}</b> — ${T('only the transport sheet, three tickets and the lunch come from Reem’s papers. Hotels, cruises, flights and the rest are placeholders until the real price sheets arrive.','فقط بيان النقل وثلاث تذاكر والغداء من ورق ريم. الفنادق والكروز والطيران والباقي أرقام مؤقتة لحين وصول شيتات الأسعار الحقيقية.')}</span><button class="btn small ghost" type="button" data-act="hide-sample">${T('Got it','تمام')}</button></div>`:''}
+  <main id="view"></main>`;
+  renderView();
+}
+function renderView(){const v=viewName(); document.querySelectorAll('.tabs a').forEach(a=>{if(a.getAttribute('href')==='#'+v) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');});
+  if(v==='program') renderProgram(); else if(v==='files') renderFiles(); else if(v==='lists') renderLists(); else renderSettings();}
+
+/* ============ program view ============ */
+function renderProgram(){
+  compute();
+  $('#view').innerHTML=`<nav class="stepbar" id="stepbar" aria-label="${T('Steps','الخطوات')}"></nav>
+   <div class="layout"><div class="step-card" id="step"></div><aside class="panel" id="panel" aria-live="polite"></aside></div><div class="mbar" id="mbar"></div>`;
+  renderStepbar(); renderStep(); renderPanel();
+}
+function stepDone(i){const p=P(); return [!!p.client.trim(),num(p.adults)>0,!!p.start,p.days.length>0&&p.days.every(d=>d.city),p.stays.length>0&&p.stays.every(s=>s.type==='none'||s.a),true,!!p.saved][i];}
+function stepSum(i){const p=P(), m=RES&&RES.main;
+  return [p.client||T('Not set','لم يحدد'),`${pl(p.adults,m&&m.F)} ${T('adults','كبار')}${p.children.length?' · '+p.children.length+' '+T('children','أطفال'):''}`,p.start?fmtD(p.start,{day:'numeric',month:'short'}):'—',
+   p.days.length+' '+T('days','أيام'),p.stays.reduce((a,s)=>a+num(s.nights),0)+' '+T('nights','ليالي'),T('Built automatically','تلقائي'),p.saved?({quote:T('Quote','عرض سعر'),confirmed:T('Confirmed','مؤكد'),cancelled:T('Cancelled','ملغي')})[p.status]:T('Not saved','غير محفوظ')][i];}
+function renderStepbar(){
+  const el=$('#stepbar'); if(!el) return;
+  el.innerHTML=STEPS.map((s,i)=>`<button type="button" data-act="step" data-v="${i+1}" class="${stepDone(i)?'done':''}"${S.ui.step===i+1?' aria-current="step"':''}><span class="emo">${s[0]}</span><span><b>${i+1}. ${T(s[1],s[2])}</b><small>${esc(stepSum(i))}</small></span><span class="ck">✓</span></button>`).join('');
+}
+function head(i,txt){const s=STEPS[i-1];return `<div class="step-head"><span class="s-ico"><span class="emo">${s[0]}</span></span><div><h2>${i}. ${T(s[1],s[2])}</h2><p>${txt}</p></div></div>`;}
+function nav(i){return `<div class="step-nav">${i>1?`<button class="btn" type="button" data-act="step" data-v="${i-1}">${T('← Back','→ السابق')}</button>`:'<span></span>'}${i<7?`<button class="btn primary" type="button" data-act="step" data-v="${i+1}">${T('Next: ','التالي: ')}${T(STEPS[i][1],STEPS[i][2])} ${T('→','←')}</button>`:''}</div>`;}
+const stp=(attr,val,lab)=>`<div class="stepper"><button type="button" data-act="inc" data-d="-1" aria-label="−">−</button><input ${attr} type="number" min="0" step="1" value="${esc(val)}" aria-label="${esc(lab||'')}"><button type="button" data-act="inc" data-d="1" aria-label="+">+</button></div>`;
+const sel=(attr,opts,cur,lab,none)=>`<select ${attr} aria-label="${esc(lab||'')}">${none!==undefined?`<option value="">${esc(none)}</option>`:''}${opts.map(([v,t])=>`<option value="${esc(v)}"${String(v)===String(cur)?' selected':''}>${esc(t)}</option>`).join('')}</select>`;
+const segB=(act,key,opts,cur,extra)=>`<div class="seg">${opts.map(([v,t])=>`<button type="button" data-act="${act}" data-k="${key}" data-v="${v}"${extra||''} aria-pressed="${String(cur)===String(v)}">${t}</button>`).join('')}</div>`;
+function roomCheck(){const p=P(), cap=num(p.rooms.sgl)+2*num(p.rooms.dbl)+3*num(p.rooms.tpl), ok=cap===num(p.adults); return {ok,t:ok?'✓ '+T(`Rooms fit all ${p.adults} adults.`,`الغرف مناسبة لكل الـ ${p.adults} فرد.`):'⚠️ '+T(`Rooms hold ${cap} people, but there are ${p.adults} adults.`,`الغرف تسع ${cap} فرد والكبار ${p.adults}.`)};}
+function nightCheck(){const p=P(), nights=p.stays.reduce((a,s)=>a+num(s.nights),0), need=Math.max(0,p.days.length-1), ok=nights===need; return {ok,t:ok?'✓ '+T(`${nights} nights — matches the ${p.days.length}-day program.`,`${nights} ليالي — مطابق لبرنامج ${p.days.length} أيام.`):'⚠️ '+T(`${nights} nights chosen; the ${p.days.length}-day program needs ${need}.`,`تم اختيار ${nights} ليالي، والبرنامج يحتاج ${need}.`)};}
+
+function renderStep(){
+  const el=$('#step'); if(!el) return; const i=S.ui.step, p=P(); let h='';
+  if(i===1){
+    h=head(1,T('Who the program is for, and in which language and currency.','البرنامج لمين، وبأي لغة وعملة.'));
+    h+=`<div class="sect"><h3><span class="emo">⚡</span>${T('Start from a ready program','البدء من برنامج جاهز')}</h3><div class="tpls">${TEMPLATES.map(t=>`<button class="tpl" type="button" data-act="tpl" data-v="${t.id}">${icon(t.ico,24)}<b>${T(t.n[0],t.n[1])}</b><span>${T(t.d[0],t.d[1])}</span></button>`).join('')}<button class="tpl" type="button" data-act="tpl" data-v="blank"><span class="emo">📄</span><b>${T('Blank program','برنامج فاضي')}</b><span>${T('Build day by day','بناء يوم بيوم')}</span></button></div>
+      ${p.days.length?`<div class="help">${T('Choosing one replaces the days and stays of this program.','الاختيار يستبدل أيام وإقامة البرنامج الحالي.')}</div>`:''}</div>
+    <div class="sect"><div class="grid">
+      <div class="field"><label class="lbl" for="p-client">${T('Client or group name','اسم العميل أو المجموعة')}</label><input id="p-client" data-p="client" type="text" value="${esc(p.client)}"></div>
+      <div class="field"><label class="lbl" for="p-agency">${T('Agency','الوكالة')}</label><input id="p-agency" data-p="agency" type="text" value="${esc(p.agency)}"></div>
+      <div class="field"><span class="lbl">🛂 ${T('Nationality','الجنسية')}</span>${sel('data-p="nat"',S.lists.nats.map(n=>[n.id,n.nat]),p.nat,T('Nationality','الجنسية'))}</div>
+      <div class="field"><span class="lbl">${T('File number (automatic)','رقم الملف (تلقائي)')}</span><div class="tag" style="padding:8px 10px"><span class="emo">🗂️</span><span class="num">${esc(p.fileNo)}</span></div></div>
+    </div>
+    <div class="grid">
+      <div class="field"><span class="lbl">🗣️ ${T('Program language (guide & documents)','لغة البرنامج (المرشد والملفات)')}</span>${segB('pset','plang',Object.keys(PLANGS).map(k=>[k,plangN(k)]),p.plang)}</div>
+      <div class="field"><span class="lbl">💵 ${T('Price currency for the client','عملة السعر للعميل')}</span>${segB('pset','cur',CURS.map(c=>[c,`${FLAG[c]} ${curN(c)}`]),p.cur)}</div>
+    </div></div>`;
+  }
+  if(i===2){
+    const rc=roomCheck();
+    h=head(2,T('How many people, their rooms, free places and children.','عدد الأفراد وتوزيع الغرف والأماكن المجانية والأطفال.'));
+    h+=`<div class="sect"><div class="grid">
+      <div class="field"><span class="lbl">👥 ${T('Adults (paying)','الكبار (يدفعون)')}</span>${stp('data-p="adults"',p.adults,T('Adults','الكبار'))}</div>
+      <div class="field"><span class="lbl">🎁 ${T('1 free place for every … paying (0 = none)','مكان مجاني لكل … فرد (0 = بدون)')}</span>${stp('data-p="focEvery"',p.focEvery,'FOC')}<span class="help" id="foc-note"></span></div>
+    </div></div>
+    <div class="sect"><h3><span class="emo">🛏️</span>${T('Rooms','الغرف')}</h3>
+      <div class="rooms">${[['sgl','🛏️',T('Single','فردي'),1],['dbl','🛏️🛏️',T('Double','مزدوج'),2],['tpl','🛏️🛏️🛏️',T('Triple','ثلاثي'),3]].map(([k,e,n,c])=>`<div class="room"><b><span class="emo">${e}</span> ${n}</b>${stp(`data-room="${k}"`,p.rooms[k],n)}<span class="help">${c} ${c>1?T('people each','أفراد'):T('person','فرد')}</span></div>`).join('')}</div>
+      <div class="row"><div class="check ${rc.ok?'ok':'bad'}" id="room-check">${rc.t}</div><button class="btn small" type="button" data-act="auto-rooms">${T('Fill rooms automatically','توزيع تلقائي')}</button></div>
+      <div class="help">${T('A free place (tour leader) gets a single room.','المكان المجاني (قائد المجموعة) يأخذ غرفة فردي.')}</div></div>
+    <div class="sect"><h3><span class="emo">🧒</span>${T('Children','الأطفال')}</h3>
+      <div class="kids">${p.children.map(k=>`<span class="kid">${T('Age','السن')} <input data-kid="${k.id}" type="number" min="0" max="17" step="1" value="${esc(k.age)}" aria-label="${T('Child age','سن الطفل')}"><button class="x" type="button" data-act="kid-del" data-id="${k.id}" aria-label="×">×</button></span>`).join('')}<button class="btn small dashed" type="button" data-act="kid-add">+ ${T('Add a child','إضافة طفل')}</button></div>
+      <div class="help">${bandText()}</div></div>
+    <div class="sect"><h3><span class="emo">📊</span>${T('Also price these group sizes','تسعير أعداد أخرى للمقارنة')}</h3>
+      <div class="chips">${p.tiers.map(n=>`<span class="chip"><span class="num">${n}${num(p.focEvery)>0&&Math.floor(n/num(p.focEvery))?'+'+Math.floor(n/num(p.focEvery)):''}</span><button class="x" style="width:20px;height:20px" type="button" data-act="tier-del" data-v="${n}" aria-label="×">×</button></span>`).join('')}
+        ${[10,15,20,25,30,35,40].filter(n=>!p.tiers.includes(n)&&n!==num(p.adults)).slice(0,4).map(n=>`<button class="chip" type="button" data-act="tier-add" data-v="${n}">+${n}</button>`).join('')}</div></div>`;
+  }
+  if(i===3){
+    h=head(3,T('Arrival date and length. Day names fill in by themselves, and high-season days are marked.','تاريخ الوصول وعدد الأيام. أسماء الأيام تتكتب تلقائيًا، وأيام الذروة تتعلّم.'));
+    h+=`<div class="sect"><div class="grid">
+      <div class="field"><label class="lbl" for="p-start">📅 ${T('Arrival date','تاريخ الوصول')}</label><input id="p-start" data-p="start" type="date" value="${esc(p.start)}"></div>
+      <div class="field"><span class="lbl">✈️ ${T('Arrival city','مدينة الوصول')}</span>${sel('data-p="arrCity"',Object.keys(CITIES).filter(c=>c!=='nile').map(c=>[c,cityN(c)]),p.arrCity,T('Arrival city','مدينة الوصول'))}</div>
+      <div class="field"><span class="lbl">🗓️ ${T('Number of days','عدد الأيام')}</span>${stp('data-p="ndays"',p.days.length,T('Days','الأيام'))}</div>
+    </div>
+    <div class="cal">${p.days.map((d,j)=>{const dt=dayDate(j);return `<div class="${isPeak(dt)?'pk':''}"><b>${T('Day','يوم')} ${j+1}</b><span>${fmtD(dt,{weekday:'short'})}</span><small>${fmtD(dt,{day:'numeric',month:'short'})}</small><small>${isPeak(dt)?'🔥 ':''}${esc(cityN(d.city))}</small></div>`;}).join('')}</div>
+    <div class="help">🔥 ${T('High season','موسم الذروة')}: ${(S.set.seasons||[]).map(s=>`${esc(s.name)} (${s.from} → ${s.to})`).join(' · ')} — ${T('dates are in Settings.','التواريخ في الإعدادات.')}</div></div>`;
+  }
+  if(i===4){
+    h=head(4,T('Open a day to choose its city, visits, transport, guide, rep, meals, flight or train. The price updates with every choice.','افتح أي يوم واختار المدينة والمزارات والنقل والمرشد والمندوب والوجبات والطيران أو القطار. السعر بيتحدث مع كل اختيار.'));
+    h+=`<div class="days">${p.days.map((d,j)=>dayCard(d,j)).join('')||`<div class="empty">${T('No days yet. Add the first day, or start from a ready program in step 1.','لا توجد أيام بعد. أضف أول يوم، أو ابدأ ببرنامج جاهز في الخطوة 1.')}</div>`}</div>
+      <div class="row" style="margin-top:12px"><button class="btn dashed" style="flex:1" type="button" data-act="day-add"><span class="emo">➕</span> ${T('Add a day','إضافة يوم')}</button></div>`;
+  }
+  if(i===5){
+    const nc=nightCheck();
+    h=head(5,T('Hotels and cruise in order, night by night. Add a second option (B) to quote two categories side by side.','الفنادق والكروز بالترتيب ليلة بليلة. أضف اختيار تاني (B) لتسعير فئتين جنب بعض.'));
+    h+=`<div class="check ${nc.ok?'ok':'bad'}" style="margin-bottom:12px">${nc.t}</div>
+      <div class="stays">${p.stays.map((s,j)=>stayCard(s,j)).join('')||`<div class="empty">${T('No stays yet.','لا توجد إقامة بعد.')}</div>`}</div>
+      <div class="row" style="margin-top:12px"><button class="btn dashed" type="button" data-act="stay-add" data-v="hotel"><span class="emo">🏨</span> ${T('Add hotel','إضافة فندق')}</button><button class="btn dashed" type="button" data-act="stay-add" data-v="cruise"><span class="emo">🚢</span> ${T('Add Nile cruise','إضافة كروز')}</button><button class="btn dashed" type="button" data-act="stay-add" data-v="none"><span class="emo">🚆</span> ${T('Night without hotel','ليلة بدون فندق')}</button></div>`;
+  }
+  if(i===6){
+    h=head(6,T('Built from what you chose. Untick a line to hide it, or add your own lines.','بتطلع تلقائيًا من اختياراتك. شيل العلامة لإخفاء سطر، أو أضف سطور.'));
+    const box=(items,kind)=>`<ul>${items.map(it=>{const off=p.hide.includes(it.k);return `<li class="${off?'off':''}"><label><input type="checkbox" data-act="hide" data-v="${esc(it.k)}"${off?'':' checked'}><span>${esc(it.t)}</span></label></li>`;}).join('')}</ul>
+      <div class="add"><input id="add-${kind}" type="text" placeholder="${T('Add a line…','إضافة سطر…')}" aria-label="${T('Add a line','إضافة سطر')}"><button class="btn small" type="button" data-act="add-line" data-v="${kind}">${T('Add','إضافة')}</button></div>`;
+    h+=`<div class="ie"><div class="card"><h3>✅ ${T('Included','يشمل')}</h3>${box(inclItems(),'in')}</div><div class="card"><h3>❌ ${T('Not included','لا يشمل')}</h3>${box(exclItems(),'ex')}</div></div>`;
+  }
+  if(i===7){
+    h=head(7,T('Check the notes, choose the status and save the file. The client view never shows internal costs.','راجع الملاحظات واختار الحالة واحفظ الملف. عرض العميل لا يظهر فيه أي تكلفة داخلية.'));
+    const W=RES.warns;
+    h+=W.length?`<div class="warns">${W.map(x=>`<div class="${x.t}">${x.t==='w'?'⚠️':''}<span>${esc(x.m)}</span></div>`).join('')}</div>`:`<div class="check ok" style="margin-bottom:14px">✓ ${T('Nothing to check.','لا توجد ملاحظات.')}</div>`;
+    h+=`<div class="rv-top">${segB('ui','view',[['client','👤 '+T('Client view','عرض العميل')],['internal','🔒 '+T('Internal summary','الملخص الداخلي')]],S.ui.view)}
+      <div class="row">${segB('pset','status',[['quote',T('Quote','عرض سعر')],['confirmed',T('Confirmed','مؤكد')],['cancelled',T('Cancelled','ملغي')]],p.status)}<button class="btn gold" type="button" data-act="save-file"><span class="emo">💾</span>${T('Save file','حفظ الملف')}</button></div></div>
+      <div id="saved-note" class="help" style="margin-bottom:10px">${p.saved?'💾 '+T('Saved ','آخر حفظ ')+fmtD(p.saved,{day:'numeric',month:'short'}):''}</div>
+      ${S.ui.view==='internal'?internalView():clientView()}`;
+  }
+  el.innerHTML=h+nav(i);
+  if(i===2) updFocNote();
+  if(i===4) updTransHints();
+}
+function bandText(){const b=(S.set.bands||[]).slice().sort((x,y)=>num(x.to)-num(y.to));let from=0;const parts=b.map(x=>{const t=`${from}–${x.to}: ${x.pct}%`;from=Math.round((num(x.to)+0.01)*100)/100;return t;});return T('Child price = % of the adult double price by age · ','سعر الطفل = نسبة من سعر الكبير (مزدوج) حسب السن · ')+parts.join(' · ')+T(` · ${from}+ adult price`,` · ${from}+ سعر كبير`);}
+function updFocNote(){const el=$('#foc-note'); if(!el) return; const m=RES.main; el.textContent=m&&m.F?T(`→ ${m.Pay}+${m.F}: ${m.F} free, cost shared by ${m.Pay}`,`← ${m.Pay}+${m.F}: ${m.F} مجاني، تكلفته على ${m.Pay}`):T('No free places.','بدون أماكن مجانية.');}
+
+/* day card */
+function chipTxt(e,t,extra){return `<span class="tag">${icon(e,14)} ${esc(t)}${extra||''}</span>`;}
+function dayCard(d,j){
+  const p=P(), dt=dayDate(j), open=S.ui.open===d.id, pk=isPeak(dt), ns=nightStays()[j], sum=[];
+  d.tix.forEach(id=>{const r=L('tickets',id); if(r) sum.push(chipTxt(r.id==='t_pyr'?'pyr':'🎟️',r.name));});
+  d.trans.forEach(t=>{const r=rateById(t.rate); if(r) sum.push(chipTxt('🚌',(isAr()?r.ar:r.en).split(' — ')[0]+(t.ret&&r.kind==='transfer'?' ↩️':'')));});
+  if(d.guide!=='none') sum.push(chipTxt('🧭',d.guide==='half'?T('Guide · half day','مرشد · نص يوم'):T('Guide · full day','مرشد · يوم كامل')));
+  if(d.rep){const r=L('reps',d.rep); if(r) sum.push(chipTxt('🧑‍💼',T('Rep','مندوب')+' · '+optN('service',r.service)));}
+  if(d.lunch){const r=L('rests',d.lunch); if(r) sum.push(chipTxt('🍽️',T('Lunch','غداء')+' · '+r.name));}
+  if(d.dinner){const r=L('rests',d.dinner); if(r) sum.push(chipTxt('🍲',T('Dinner','عشاء')+' · '+r.name));}
+  if(d.flight){const r=L('flights',d.flight); if(r) sum.push(chipTxt('✈️',`${r.from} → ${r.to}`));}
+  if(d.train){const r=L('trains',d.train); if(r) sum.push(chipTxt('🚆',`${r.from} → ${r.to}`));}
+  d.acts.forEach(id=>{const r=L('acts',id); if(r) sum.push(chipTxt('⛵',r.name));});
+  d.opts.forEach(id=>{const r=L('opts',id); if(r) sum.push(chipTxt('⭐',r.name,` <span class="help">· ${T('optional','اختياري')}</span>`));});
+  if(ns) sum.push(chipTxt(ns.type==='cruise'?'🚢':ns.type==='none'?'🚆':'🛏️',ns.type==='none'?(ns.label||T('Night without hotel','ليلة بدون فندق')):((stayRow(ns,'a')||{}).name||T('Hotel not chosen','لم يتم اختيار فندق'))));
+  let ed='';
+  if(open){
+    const cityTix=S.lists.tickets.filter(r=>r.city===d.city||d.tix.includes(r.id));
+    const cityActs=S.lists.acts.filter(r=>r.city===d.city||d.acts.includes(r.id));
+    const cityOpts=S.lists.opts.filter(r=>r.city===d.city||d.opts.includes(r.id));
+    const g=guideFor(d.city);
+    const rests=S.lists.rests.filter(r=>r.city===d.city||r.id===d.lunch||r.id===d.dinner);
+    ed=`<div class="day-ed">
+      <div class="field"><span class="lbl">📍 ${T('City','المدينة')}</span>${sel(`data-day="${d.id}:city"`,Object.keys(CITIES).map(c=>[c,cityN(c)]),d.city,T('City','المدينة'))}</div>
+      <div class="field"><label class="lbl" for="dt-${d.id}">✏️ ${T('Day title (optional)','عنوان اليوم (اختياري)')}</label><input id="dt-${d.id}" data-day="${d.id}:title" type="text" value="${esc(d.title)}" placeholder="${T('e.g. Arrival','مثال: الوصول')}"></div>
+      <div class="field full"><span class="lbl">🎟️ ${T('Visits in','المزارات في')} ${esc(cityN(d.city))}</span><div class="chips">${cityTix.map(r=>`<button class="chip" type="button" data-act="day-tog" data-id="${d.id}" data-k="tix" data-v="${r.id}" aria-pressed="${d.tix.includes(r.id)}">${r.id==='t_pyr'?PYR(14):''}${esc(r.name)} <span class="p">${num(r.adult)?fmtIn(num(r.adult),r.cur,true):T('free','مجاني')}</span></button>`).join('')||`<span class="help">${T('No tickets for this city in the price list.','لا توجد تذاكر لهذه المدينة في قائمة الأسعار.')}</span>`}</div></div>
+      <div class="field full"><span class="lbl">🚌 ${T('Transport','النقل')}</span><div class="trl">${d.trans.map(t=>{const r=rateById(t.rate); if(!r) return ''; return `<div class="tr-row"><span class="n">${esc(isAr()?r.ar:r.en)}</span>${r.kind==='transfer'?segB('tr-ret',t.id,[['0',T('One way','ذهاب')],['1',T('Return ×2','ذهاب وعودة')]],t.ret?'1':'0',` data-day="${d.id}"`):`<span class="help">↩️ ${T('return incl.','شامل العودة')}</span>`}${sel(`data-trmode="${d.id}:${t.id}"`,[['auto',T('Auto vehicle','عربية تلقائي')],...VEH.map(v=>[v,vName(v)])],t.mode,T('Vehicle','العربية'))}<span class="v" id="tv-${t.id}"></span><button class="x" type="button" data-act="tr-del" data-id="${d.id}" data-v="${t.id}" aria-label="×">×</button></div>`;}).join('')}
+        <select data-tradd="${d.id}" aria-label="${T('Add transport','إضافة نقل')}"><option value="">➕ ${T('Add transport…','إضافة نقل…')}</option>${Object.entries(TGROUPS).map(([g2,n])=>`<optgroup label="${esc(T(n[0],n[1]))}">${S.rates.filter(r=>r.g===g2).map(r=>`<option value="${r.id}">${esc(isAr()?r.ar:r.en)}</option>`).join('')}</optgroup>`).join('')}</select></div></div>
+      <div class="field"><span class="lbl">🧭 ${T('Guide','المرشد')} (${plangN(p.plang)})</span>${segB('day-set','guide',[['none',T('None','بدون')],['full',T('Full day','يوم كامل')],['half',T('Half day','نص يوم')]],d.guide,` data-id="${d.id}"`)}<span class="help" style="margin-top:4px">${g?`${fmtIn(num(g.full),g.cur,true)} / ${fmtIn(num(g.half),g.cur,true)}`:'⚠️ '+T('No price for this language and city','لا يوجد سعر لهذه اللغة والمدينة')}</span></div>
+      <div class="field"><span class="lbl">🧑‍💼 ${T('Rep','المندوب')}</span>${sel(`data-day="${d.id}:rep"`,S.lists.reps.map(r=>[r.id,`${cityN(r.city)} · ${optN('service',r.service)} · ${fmtIn(num(r.price),r.cur,true)}`]),d.rep,T('Rep','المندوب'),T('No rep','بدون مندوب'))}</div>
+      <div class="field"><span class="lbl">🍽️ ${T('Lunch','الغداء')}</span>${sel(`data-day="${d.id}:lunch"`,rests.filter(r=>num(r.lunch)>0).map(r=>[r.id,`${r.name} · ${fmtIn(num(r.lunch),r.cur,true)}`]),d.lunch,T('Lunch','الغداء'),T('No lunch','بدون غداء'))}</div>
+      <div class="field"><span class="lbl">🍲 ${T('Dinner','العشاء')}</span>${sel(`data-day="${d.id}:dinner"`,rests.filter(r=>num(r.dinner)>0).map(r=>[r.id,`${r.name} · ${fmtIn(num(r.dinner),r.cur,true)}`]),d.dinner,T('Dinner','العشاء'),T('No dinner','بدون عشاء'))}</div>
+      <div class="field"><span class="lbl">✈️ ${T('Domestic flight','طيران داخلي')}</span>${sel(`data-day="${d.id}:flight"`,S.lists.flights.map(r=>[r.id,`${r.from} → ${r.to} · ${fmtIn(num(r.price),r.cur,true)}`]),d.flight,T('Flight','الطيران'),T('No flight','بدون طيران'))}</div>
+      <div class="field"><span class="lbl">🚆 ${T('Sleeper train','قطار النوم')}</span>${sel(`data-day="${d.id}:train"`,S.lists.trains.map(r=>[r.id,`${r.from} → ${r.to} · ${fmtIn(num(r.dbl),r.cur,true)}`]),d.train,T('Train','القطار'),T('No train','بدون قطار'))}</div>
+      <div class="field full"><span class="lbl">⛵ ${T('Activities & boats','الأنشطة والمراكب')}</span><div class="chips">${cityActs.map(r=>`<button class="chip" type="button" data-act="day-tog" data-id="${d.id}" data-k="acts" data-v="${r.id}" aria-pressed="${d.acts.includes(r.id)}">${esc(r.name)} <span class="p">${fmtIn(num(r.price),r.cur,true)} ${r.unit==='boat'?T('/boat','/مركب'):T('/person','/فرد')}</span></button>`).join('')||`<span class="help">—</span>`}</div></div>
+      <div class="field full"><span class="lbl">⭐ ${T('Optional tours (offered, not in the price)','رحلات اختيارية (تُعرض، خارج السعر)')}</span><div class="chips">${cityOpts.map(r=>`<button class="chip" type="button" data-act="day-tog" data-id="${d.id}" data-k="opts" data-v="${r.id}" aria-pressed="${d.opts.includes(r.id)}">${esc(r.name)} <span class="p">${fmtIn(num(r.price),r.cur,true)}</span></button>`).join('')||`<span class="help">—</span>`}</div></div>
+    </div>`;
+  }
+  return `<div class="day${open?' open':''}" id="day-${d.id}">
+    <div class="day-h" data-act="day-open" data-id="${d.id}" role="button" tabindex="0" aria-expanded="${open}">
+      <span class="day-n"><small>${T('DAY','يوم')}</small><b>${j+1}</b></span>
+      <span class="day-t"><b>${icon(cityI(d.city),16)} ${esc(cityN(d.city))}${d.title?` <span class="muted" style="font-weight:500">· ${esc(d.title)}</span>`:''} ${pk?`<span class="peak">🔥 ${T('high season','ذروة')}</span>`:''}</b><span class="d">${fmtD(dt,{weekday:'long',day:'numeric',month:'long'})}</span></span>
+      <span class="day-acts"><button class="ib" type="button" data-act="day-copy" data-id="${d.id}" title="${T('Copy day','نسخ اليوم')}" aria-label="${T('Copy day','نسخ اليوم')}">⧉</button><button class="ib" type="button" data-act="day-move" data-id="${d.id}" data-d="-1" title="${T('Move up','لأعلى')}" aria-label="${T('Move up','لأعلى')}">↑</button><button class="ib" type="button" data-act="day-move" data-id="${d.id}" data-d="1" title="${T('Move down','لأسفل')}" aria-label="${T('Move down','لأسفل')}">↓</button><button class="ib" type="button" data-act="day-del" data-id="${d.id}" title="${T('Delete day','حذف اليوم')}" aria-label="${T('Delete day','حذف اليوم')}">🗑</button></span>
+    </div>
+    <div class="day-sum">${sum.join('')||`<span class="help">${T('Nothing chosen yet — open the day to add services.','لم يتم اختيار شيء — افتح اليوم لإضافة الخدمات.')}</span>`}</div>
+    ${ed}</div>`;
+}
+function updTransHints(){const m=RES&&RES.main; if(!m) return; P().days.forEach(d=>d.trans.forEach(t=>{const el=document.getElementById('tv-'+t.id); if(!el) return; const x=m.lines[t.id]; el.innerHTML=x?`<span class="vi">${fleetIco(x.f,4,.8)}</span>${esc(fleetTxt(x.f))} · <span class="num">${Math.round(x.cost).toLocaleString('en-US')} ${curN('EGP')}</span>`:`<span style="color:var(--danger)">⚠️ ${T('no price','لا يوجد سعر')}</span>`;}));}
+
+/* stay card */
+function stayCard(s,j){
+  let from=0; for(let k=0;k<j;k++) from+=num(P().stays[k].nights);
+  const range=`${T('Nights','الليالي')} ${from+1}–${from+num(s.nights)} · ${fmtD(dayDate(from),{day:'numeric',month:'short'})} → ${fmtD(dayDate(from+num(s.nights)),{day:'numeric',month:'short'})}`;
+  const ic=s.type==='cruise'?'🚢':s.type==='none'?'🚆':'🏨';
+  let body='';
+  if(s.type==='hotel'){
+    const o=S.lists.hotels.filter(h=>h.city===s.city||h.id===s.a||h.id===s.b).map(h=>[h.id,`${h.name} · ${h.stars}★ (${h.cat}) · ${h.meal}`]);
+    body=`<div class="field"><span class="lbl">📍 ${T('City','المدينة')}</span>${sel(`data-stay="${s.id}:city"`,Object.keys(CITIES).filter(c=>c!=='nile').map(c=>[c,cityN(c)]),s.city,T('City','المدينة'))}</div>
+      <div class="field"><span class="lbl">🌙 ${T('Nights','الليالي')}</span>${stp(`data-stay="${s.id}:nights"`,s.nights,T('Nights','الليالي'))}</div>
+      <div class="field"><span class="lbl"><span class="ab">A</span>${T('Hotel','الفندق')}</span>${sel(`data-stay="${s.id}:a"`,o,s.a,'A',T('Choose…','اختيار…'))}</div>
+      <div class="field"><span class="lbl"><span class="ab b">B</span>${T('Second option (optional)','اختيار تاني (اختياري)')}</span>${sel(`data-stay="${s.id}:b"`,o,s.b,'B',T('None','بدون'))}</div>`;
+  } else if(s.type==='cruise'){
+    const o=S.lists.cruises.map(c=>[c.id,`${c.name} · ${c.route} · ${c.nights}${T('N','ل')} · ${optN('cabin',c.cabin)}`]);
+    const r=L('cruises',s.a);
+    body=`<div class="field"><span class="lbl">🌙 ${T('Nights','الليالي')}</span>${stp(`data-stay="${s.id}:nights"`,s.nights,T('Nights','الليالي'))}</div>
+      <div class="field"><span class="lbl"><span class="ab">A</span>${T('Cruise & cabin','الكروز والكابينة')}</span>${sel(`data-stay="${s.id}:a"`,o,s.a,'A',T('Choose…','اختيار…'))}</div>
+      <div class="field"><span class="lbl"><span class="ab b">B</span>${T('Second option (optional)','اختيار تاني (اختياري)')}</span>${sel(`data-stay="${s.id}:b"`,o,s.b,'B',T('None','بدون'))}</div>
+      ${r?`<div class="info">⛴️ ${T('Sails on','يبحر يوم')}: ${esc(r.departs||'—')} · ${T('boarding','الصعود')}: ${fmtD(dayDate(from),{weekday:'long'})}</div>`:''}`;
+  } else {
+    body=`<div class="field"><label class="lbl" for="sl-${s.id}">✏️ ${T('Label','الوصف')}</label><input id="sl-${s.id}" data-stay="${s.id}:label" type="text" value="${esc(s.label)}"></div>
+      <div class="field"><span class="lbl">🌙 ${T('Nights','الليالي')}</span>${stp(`data-stay="${s.id}:nights"`,s.nights,T('Nights','الليالي'))}</div>`;
+  }
+  const a=stayRow(s,'a'); let info='';
+  if(a&&s.type==='hotel') info=`${T('Per person per night','للفرد في الليلة')}: ${T('double','مزدوج')} ${fmtIn(num(a.dbl)/2,a.cur,true)} · ${T('triple','ثلاثي')} ${fmtIn(num(a.tpl)/3,a.cur,true)} · ${T('single','فردي')} ${fmtIn(num(a.sgl),a.cur,true)}`;
+  if(a&&s.type==='cruise') info=`${T('Per person per night','للفرد في الليلة')}: ${T('double','مزدوج')} ${fmtIn(num(a.dbl),a.cur,true)} · ${T('single','فردي')} ${fmtIn(num(a.sgl),a.cur,true)}`;
+  return `<div class="stay"><div class="stay-h"><span class="ic"><span class="emo">${ic}</span></span><div class="t"><b>${s.type==='hotel'?T('Hotel','فندق'):s.type==='cruise'?T('Nile cruise','كروز نيلي'):T('Night without hotel','ليلة بدون فندق')}</b><div class="help">${range}</div></div>
+    <button class="ib" type="button" data-act="stay-move" data-id="${s.id}" data-d="-1" aria-label="${T('Move up','لأعلى')}">↑</button><button class="ib" type="button" data-act="stay-move" data-id="${s.id}" data-d="1" aria-label="${T('Move down','لأسفل')}">↓</button><button class="ib" type="button" data-act="stay-del" data-id="${s.id}" aria-label="${T('Delete','حذف')}">🗑</button></div>
+    <div class="stay-b">${body}</div>${info?`<div class="info">${info} · ${T('“or similar” is added in the program','«أو ما يماثله» تُكتب في البرنامج')}</div>`:''}</div>`;
+}
+
+/* client & internal views */
+function priceTable(c){
+  const rows=RES.res.map(r=>{const x=r.cat[c];return `<tr${r.Pay===num(P().adults)?' class="hl"':''}><td class="num">${pl(r.Pay,r.F)}</td><td class="n">${money(x.sellD,true)}</td><td class="n">${money(x.sellT,true)}</td><td class="n">+${money(x.supp,true)}</td></tr>`;}).join('');
+  return `<div class="tbl"><table><thead><tr><th>${T('Group','العدد')}</th><th class="n">${T('Per person in double','للفرد في المزدوج')}</th><th class="n">${T('Per person in triple','للفرد في الثلاثي')}</th><th class="n">${T('Single supplement','ملحق الفردي')}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function clientView(){
+  const p=P(), m=RES.main; if(!m) return `<div class="empty">—</div>`;
+  const ns=nightStays(), hidden=k=>p.hide.includes(k);
+  const itin=p.days.map((d,j)=>{const parts=[]; if(d.title) parts.push(d.title);
+    const tx=d.tix.map(id=>(L('tickets',id)||{}).name).filter(Boolean); if(tx.length) parts.push(T('Visits: ','زيارة: ')+tx.join(sep()));
+    if(d.flight){const f=L('flights',d.flight); if(f) parts.push(`✈️ ${f.from} → ${f.to}`);} if(d.train){const f=L('trains',d.train); if(f) parts.push(`🚆 ${f.from} → ${f.to}`);}
+    const ml=[]; if(d.lunch) ml.push(T('lunch','غداء')); if(d.dinner) ml.push(T('dinner','عشاء')); if(ml.length) parts.push('🍽️ '+ml.join(' + '));
+    const ac=d.acts.map(id=>(L('acts',id)||{}).name).filter(Boolean); if(ac.length) parts.push(ac.join(sep()));
+    const s=ns[j]; if(s) parts.push('🛏️ '+(s.type==='none'?(s.label||''):((stayRow(s,'a')||{}).name||'')));
+    return `<div><b>${T('Day','يوم')} ${j+1}<br><span class="help">${fmtD(dayDate(j),{weekday:'short',day:'numeric',month:'short'})}</span></b><span><b>${esc(cityN(d.city))}</b> — ${esc(parts.join(' · '))}</span></div>`;}).join('');
+  const hasB=m.hasB;
+  const hotels=p.stays.filter(s=>s.type!=='none').map(s=>{const a=stayRow(s,'a'), b=s.b&&s.b!==s.a?stayRow(s,'b'):null; return `<tr><td>${s.type==='cruise'?'🚢 '+T('Nile cruise','كروز نيلي'):esc(cityN(s.city))}</td><td class="num">${s.nights}</td><td>${a?esc(a.name)+' '+T('(or similar)','(أو ما يماثله)'):'—'}</td>${hasB?`<td>${b?esc(b.name)+' '+T('(or similar)','(أو ما يماثله)'):'—'}</td>`:''}</tr>`;}).join('');
+  const kids=m.cat.a.kids, inc=inclItems().filter(x=>!hidden(x.k)), exc=exclItems().filter(x=>!hidden(x.k)), op=optList();
+  return `<div class="doc"><div class="doc-h">${PYR(34)}<div class="bn">Esperanza Travel<small>Esperanza viaggi egitto</small></div><div class="fn">${esc(p.fileNo)}<br>${fmtD(todayIso(),{day:'numeric',month:'short',year:'numeric'})}</div></div>
+    <div class="doc-b">
+      <div><h3 style="margin:0 0 6px;font-size:18px">${esc(p.client||T('Program','البرنامج'))}</h3><div class="meta"><span>📅 ${fmtD(p.start,{day:'numeric',month:'short',year:'numeric'})} → ${fmtD(dayDate(Math.max(0,p.days.length-1)),{day:'numeric',month:'short',year:'numeric'})}</span><span>🗓️ ${p.days.length} ${T('days','أيام')} / ${Math.max(0,p.days.length-1)} ${T('nights','ليالي')}</span><span>👥 ${pl(p.adults,m.F)}${p.children.length?' + '+p.children.length+' '+T('children','أطفال'):''}</span><span>🗣️ ${plangN(p.plang)}</span></div></div>
+      <div><h4>${T('Itinerary','البرنامج')}</h4><div class="itin">${itin}</div></div>
+      ${hotels?`<div><h4>${T('Accommodation','الإقامة')}</h4><div class="tbl"><table><thead><tr><th>${T('Where','المكان')}</th><th>${T('Nights','الليالي')}</th><th><span class="ab">A</span>${T('Option A','الفئة A')}</th>${hasB?`<th><span class="ab b">B</span>${T('Option B','الفئة B')}</th>`:''}</tr></thead><tbody>${hotels}</tbody></table></div></div>`:''}
+      <div><h4>${T('Prices per person','الأسعار للفرد')} (${curN(p.cur)})</h4>${hasB?`<div class="help" style="margin-bottom:4px"><span class="ab">A</span>${T('Option A','الفئة A')}</div>`:''}${priceTable('a')}${hasB?`<div class="help" style="margin:10px 0 4px"><span class="ab b">B</span>${T('Option B','الفئة B')}</div>${priceTable('b')}`:''}
+        ${kids.length?`<ul class="lst" style="margin-top:8px">${kids.map(k=>`<li>🧒 ${T('Child','طفل')} ${k.age} ${T('years','سنة')}: ${k.price?money(k.price,true):T('free','مجاني')}</li>`).join('')}</ul>`:''}
+        ${m.F?`<div class="help" style="margin-top:6px">🎁 ${T(`${m.F} free place for the group leader (1 per ${p.focEvery} paying)`,`${m.F} مكان مجاني لقائد المجموعة (1 لكل ${p.focEvery})`)}</div>`:''}</div>
+      ${op.length?`<div><h4>${T('Optional tours','رحلات اختيارية')}</h4><ul class="lst">${op.map(o=>`<li>⭐ ${esc(o.name)} — ${fmtIn(num(o.price),o.cur,true)} ${T('per person','للفرد')}</li>`).join('')}</ul></div>`:''}
+      <div class="ie" style="gap:14px"><div><h4>${T('Included','يشمل')}</h4><ul class="lst">${inc.map(x=>`<li>${esc(x.t)}</li>`).join('')}</ul></div><div><h4>${T('Not included','لا يشمل')}</h4><ul class="lst">${exc.map(x=>`<li>${esc(x.t)}</li>`).join('')}</ul></div></div>
+      <div class="help">${T('Prices valid for the dates above.','الأسعار سارية للتواريخ المذكورة.')} ${p.cur!=='EGP'?T(`Exchange rate used: 1 ${p.cur} = ${num(S.fx[p.cur])} EGP.`,`سعر الصرف: 1 ${p.cur} = ${num(S.fx[p.cur])} ج.م.`):''}</div>
+    </div></div>`;
+}
+function internalView(){
+  const p=P(), m=RES.main; if(!m) return '';
+  const x=m.cat.a, t=totals(m,'a');
+  const rows=BRK.filter(b=>b[0]!=='profit').map(b=>{const v=x.brk[b[0]]; return v>0.0001?`<tr><td>${icon(b[1],14)} ${T(b[2],b[3])}</td><td class="n">${egpT(v)}</td><td class="n">${egpT(v*m.Pay)}</td></tr>`:'';}).join('');
+  const due=addD(p.start,-num(S.set.depositDays));
+  return `<div class="card" style="display:flex;flex-direction:column;gap:14px">
+    <h3>🔒 ${T('Internal summary — management only','ملخص داخلي — للإدارة فقط')} · <span class="num">${pl(m.Pay,m.F)}</span> · <span class="ab">A</span></h3>
+    <div class="kpis"><div class="kpi"><span>${T('Total selling price','إجمالي البيع')}</span><b>${money(t.revenue,true)}</b></div><div class="kpi"><span>${T('Total cost','إجمالي التكلفة')}</span><b>${money(t.cost,true)}</b></div><div class="kpi"><span>${T('Profit','الربح')}</span><b>${money(t.profit,true)}</b></div><div class="kpi"><span>${T('Margin','نسبة الربح')}</span><b>${t.revenue?Math.round(t.profit/t.revenue*100):0}%</b></div><div class="kpi"><span>${T('Deposit','العربون')} ${num(S.set.deposit)}%</span><b>${money(t.deposit,true)}</b></div><div class="kpi"><span>${T('Deposit due','موعد العربون')}</span><b style="font-family:var(--font-ui)">${fmtD(due,{day:'numeric',month:'short',year:'numeric'})}</b></div></div>
+    <div class="tbl"><table><thead><tr><th>${T('Cost','التكلفة')}</th><th class="n">${T('Per paying person','للفرد')}</th><th class="n">${T('Whole group','للجروب')}</th></tr></thead><tbody>${rows}
+      <tr class="tot"><td>${T('Cost per person (double)','التكلفة للفرد (مزدوج)')}</td><td class="n">${egpT(x.costD)}</td><td class="n">${egpT(x.costD*m.Pay)}</td></tr>
+      <tr class="hl"><td>${T('Selling price (double)','سعر البيع (مزدوج)')}</td><td class="n">${egpT(x.sellD)}</td><td class="n">${egpT(x.sellD*m.Pay)}</td></tr></tbody></table></div>
+    <div class="help">${T(`Rooms: ${p.rooms.sgl} single · ${p.rooms.dbl} double · ${p.rooms.tpl} triple. Totals use this room split; children are priced as a % of the adult price.`,`الغرف: ${p.rooms.sgl} فردي · ${p.rooms.dbl} مزدوج · ${p.rooms.tpl} ثلاثي. الإجماليات بهذا التوزيع، والأطفال بنسبة من سعر الكبير.`)}</div>
+    <div class="help">🚌 ${T('Vehicles','العربيات')}: ${p.days.map((d,j)=>d.trans.map(tr=>{const l=m.lines[tr.id]; return l?`${T('Day','يوم')} ${j+1}: ${fleetTxt(l.f)}`:'';}).filter(Boolean).join(', ')).filter(Boolean).join(' · ')||'—'}</div>
+  </div>`;
+}
+
+/* ============ panel ============ */
+function donut(parts,total){const R=48,C=2*Math.PI*R;let acc=0;return `<svg width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="${T('Where the money goes','توزيع السعر')}"><circle cx="60" cy="60" r="${R}" fill="none" style="stroke:var(--surface-2)" stroke-width="16"/>${parts.map(x=>{const len=x.v/total*C,g=parts.length>1?Math.min(1.5,len/2):0;const s=`<circle cx="60" cy="60" r="${R}" fill="none" style="stroke:var(${x.col})" stroke-width="16" stroke-dasharray="${Math.max(0,len-g)} ${C}" stroke-dashoffset="${-acc}" transform="rotate(-90 60 60)"><title>${esc(x.l)}</title></circle>`;acc+=len;return s;}).join('')}</svg>`;}
+let lastBig=null;
+function renderPanel(){
+  const el=$('#panel'); if(!el) return; const p=P();
+  if(!RES.res.length){el.innerHTML=`<div class="empty">${T('Add the number of adults in step 2.','أدخل عدد الكبار في الخطوة 2.')}</div>`; $('#mbar').innerHTML=''; return;}
+  const fp=RES.res.find(r=>r.Pay===S.ui.focus)||RES.main, a=fp.cat.a, b=fp.cat.b, hasB=fp.hasB;
+  const parts=BRK.map(x=>({v:a.brk[x[0]],col:x[4],e:x[1],l:T(x[2],x[3])})).filter(x=>x.v>0.0001);
+  const total=a.sellD||1, mx=Math.max(...RES.res.map(r=>r.cat.a.sellD),1), W=RES.warns.filter(w=>w.t==='w');
+  const pre=p.profitMode==='pct'?a.costD*(1+num(p.profit)/100):a.costD+num(p.profit)*rateOf(p.cur);
+  el.innerHTML=`
+    <div class="row" style="justify-content:space-between"><h2>${T('Price per person','السعر للفرد')}</h2>${RES.res.length>1?`<div class="tiers">${RES.res.map(r=>`<button type="button" data-act="focus" data-v="${r.Pay}" aria-pressed="${r===fp}">${pl(r.Pay,r.F)}</button>`).join('')}</div>`:''}</div>
+    <div class="curs">${CURS.map(c=>`<button type="button" data-act="pset" data-k="cur" data-v="${c}" aria-pressed="${p.cur===c}"><span><span class="emo">${FLAG[c]}</span>${curN(c)}</span><b>${fmtIn(roundUp(pre,c)/rateOf(c),c,true)}</b></button>`).join('')}</div>
+    <div class="big"><span class="s">${esc(p.client||T('New program','برنامج جديد'))} · ${p.days.length} ${T('days','أيام')}</span><span class="v" id="bigv">${money(a.sellD,true)}</span><span class="s">${T(`per person in a double room · group of ${pl(fp.Pay,fp.F)}`,`للفرد في غرفة مزدوجة · جروب ${pl(fp.Pay,fp.F)}`)}${hasB?' · <span class="ab">A</span>':''}</span></div>
+    <div class="ptbl"><table><thead><tr><th></th><th class="n"><span class="ab">A</span></th>${hasB?'<th class="n"><span class="ab b">B</span></th>':''}</tr></thead><tbody>
+      <tr><td>🛏️🛏️ ${T('Double','مزدوج')}</td><td class="n">${money(a.sellD,true)}</td>${hasB?`<td class="n">${money(b.sellD,true)}</td>`:''}</tr>
+      <tr><td>🛏️🛏️🛏️ ${T('Triple','ثلاثي')}</td><td class="n">${money(a.sellT,true)}</td>${hasB?`<td class="n">${money(b.sellT,true)}</td>`:''}</tr>
+      <tr><td>🛏️ ${T('Single supplement','ملحق الفردي')}</td><td class="n">+${money(a.supp,true)}</td>${hasB?`<td class="n">+${money(b.supp,true)}</td>`:''}</tr>
+      ${a.kids.map((k,i)=>`<tr><td>🧒 ${T('Child','طفل')} ${k.age} (${k.pct}%)</td><td class="n">${k.price?money(k.price,true):T('free','مجاني')}</td>${hasB?`<td class="n">${b.kids[i].price?money(b.kids[i].price,true):T('free','مجاني')}</td>`:''}</tr>`).join('')}
+    </tbody></table></div>
+    <div><h2>${T('Where the money goes','توزيع السعر')} · A · ${T('double','مزدوج')}</h2><div class="donut-row"><div class="donut">${donut(parts,total)}<div class="c"><b>${pl(fp.Pay,fp.F)}</b><span>${T('pax','فرد')}</span></div></div>
+      <div class="legend">${parts.map(x=>`<div><span class="emo">${x.e}</span><span><span class="sw" style="--c:var(${x.col})"></span>${esc(x.l)}</span><b>${money(x.v)}</b><small>${Math.round(x.v/total*100)}%</small></div>`).join('')}</div></div></div>
+    ${RES.res.length>1?`<div><h2>${T('Price by group size','السعر حسب العدد')}</h2><div class="bars">${RES.res.map(r=>`<button type="button" data-act="focus" data-v="${r.Pay}" aria-pressed="${r===fp}"><span class="bv">${money(r.cat.a.sellD,true)}</span><span class="bb" style="height:${Math.max(4,r.cat.a.sellD/mx*100-30)}%"></span><span class="bl">${pl(r.Pay,r.F)}</span></button>`).join('')}</div></div>`:''}
+    ${W.length?`<button class="wbtn" type="button" data-act="step" data-v="7"><span class="emo">⚠️</span>${T(`${W.length} thing(s) to check — see Review`,`${W.length} ملاحظة للمراجعة — في خطوة المراجعة`)}</button>`:''}
+    <div class="panel-foot"><button class="btn primary" type="button" data-act="copy"><span class="emo">💬</span>${T('Copy for WhatsApp','نسخ لواتساب')}</button><span class="toast" id="toast"></span><textarea class="copybox" id="copybox" hidden readonly aria-label="WhatsApp"></textarea></div>`;
+  $('#mbar').innerHTML=`<span class="v">${money(a.sellD,true)}</span><span class="s">${T('per person, double','للفرد، مزدوج')} · ${pl(fp.Pay,fp.F)}</span><button class="btn small" type="button" data-act="to-panel">${T('Prices','الأسعار')}</button>`;
+  const big=$('#bigv'), to=a.sellD/rateOf(p.cur);
+  if(lastBig&&lastBig.c===p.cur&&lastBig.v!==to&&!reduceMotion()){const from=lastBig.v,t0=performance.now();const st=tm=>{const k=Math.min(1,(tm-t0)/380),e=1-Math.pow(1-k,3);big.textContent=fmtIn(Math.round(from+(to-from)*e),p.cur,true);if(k<1)requestAnimationFrame(st);else big.textContent=fmtIn(to,p.cur,true);};requestAnimationFrame(st);}
+  lastBig={c:p.cur,v:to};
+}
+function refresh(){compute(); renderStepbar(); renderPanel();
+  if(S.ui.step===2){updFocNote(); const rc=roomCheck(), el=$('#room-check'); if(el){el.className='check '+(rc.ok?'ok':'bad'); el.textContent=rc.t;}}
+  if(S.ui.step===4) updTransHints(); if(S.ui.step===7) renderStep();}
+
+function waText(){
+  const p=P(), m=RES.main; if(!m) return '';
+  const lines=[`*${p.client||T('Program','برنامج')}* — ${p.fileNo}`,`📅 ${fmtD(p.start,{day:'numeric',month:'short',year:'numeric'})} · ${p.days.length} ${T('days','أيام')}`,'',`*${T('Price per person','السعر للفرد')} (${curN(p.cur)})*`];
+  RES.res.forEach(r=>{const a=r.cat.a,b=r.cat.b; lines.push(`• ${pl(r.Pay,r.F)}: ${T('double','مزدوج')} ${money(a.sellD,true)} · ${T('triple','ثلاثي')} ${money(a.sellT,true)} · ${T('single suppl.','ملحق فردي')} +${money(a.supp,true)}${r.hasB?` | B: ${money(b.sellD,true)}`:''}`);});
+  m.cat.a.kids.forEach(k=>lines.push(`🧒 ${T('Child','طفل')} ${k.age}: ${k.price?money(k.price,true):T('free','مجاني')}`));
+  lines.push('',`✅ ${T('Included','يشمل')}:`); inclItems().filter(x=>!p.hide.includes(x.k)).forEach(x=>lines.push('– '+x.t));
+  lines.push('',`❌ ${T('Not included','لا يشمل')}:`); exclItems().filter(x=>!p.hide.includes(x.k)).forEach(x=>lines.push('– '+x.t));
+  lines.push('','Esperanza Travel');
+  return lines.join('\n');
+}
+
+/* ============ files ============ */
+function renderFiles(){
+  const f=S.files.slice().sort((a,b)=>(b.saved||'').localeCompare(a.saved||''));
+  $('#view').innerHTML=`<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:12px"><h3>📁 ${T('Saved programs','البرامج المحفوظة')}</h3><button class="btn primary" type="button" data-act="new-prog"><span class="emo">➕</span>${T('New program','برنامج جديد')}</button></div>
+    <div class="files">${f.map(x=>`<div class="file"><span class="emo" style="font-size:22px">🗂️</span><div class="t"><b>${esc(x.client||T('Untitled','بدون اسم'))}</b><span class="num">${esc(x.fileNo)}</span> <span>· ${fmtD(x.start,{day:'numeric',month:'short',year:'numeric'})} · ${x.days.length} ${T('days','أيام')} · ${x.adults} ${T('adults','كبار')}${x.sum?` · ${fmtIn(x.sum.v,x.sum.c,true)} ${T('per person','للفرد')}`:''}</span></div>
+      <span class="st ${x.status}">${({quote:T('Quote','عرض سعر'),confirmed:T('Confirmed','مؤكد'),cancelled:T('Cancelled','ملغي')})[x.status]}</span>
+      <button class="btn small" type="button" data-act="file-open" data-id="${x.id}">${T('Open','فتح')}</button><button class="btn small" type="button" data-act="file-dup" data-id="${x.id}">⧉ ${T('Copy','نسخ')}</button><button class="btn small danger" type="button" data-act="file-del" data-id="${x.id}">${S.ui.delArm===x.id?T('Click again to delete','اضغط تاني للحذف'):'🗑'}</button></div>`).join('')||`<div class="empty">${T('No saved programs yet. Save one from step 7.','لا توجد برامج محفوظة. احفظ من الخطوة 7.')}</div>`}</div></div>`;
+}
+
+/* ============ price lists ============ */
+function renderLists(){
+  const cat=S.ui.list;
+  const tabs=`<div class="cattabs">${LIST_ORDER.map(k=>{const d=k==='transport'?{ico:'🚌',n:['Transport','النقل']}:LISTS[k];return `<button type="button" data-act="list" data-v="${k}" aria-pressed="${cat===k}"><span class="emo">${d.ico}</span>${T(d.n[0],d.n[1])}</button>`;}).join('')}</div>`;
+  let body='';
+  if(cat==='transport'){
+    body=`<p class="help" style="margin-top:0">${T('EGP per vehicle (from the operating sheet of 13 June). 0 = vehicle not offered. The app picks the right vehicles for the group size.','بالجنيه لكل عربية (من بيان التشغيل 13 يونيو). 0 = العربية غير متاحة. التطبيق بيختار العربيات المناسبة للعدد.')}</p>
+      <div class="row" style="margin-bottom:12px">${VEH.map(v=>`<label class="field" style="width:8.5rem"><span class="lbl">${vName(v)} — ${T('max seats','أقصى عدد')}</span><input data-cap="${v}" type="number" min="1" value="${esc(S.caps[v])}"></label>`).join('')}</div>
+      <div class="scroll"><table class="ltbl"><thead><tr><th>${T('Service (Arabic)','الخدمة (عربي)')}</th><th>${T('Service (English)','الخدمة (إنجليزي)')}</th><th>${T('Type','النوع')}</th>${VEH.map(v=>`<th>${vName(v)}</th>`).join('')}<th></th></tr></thead><tbody>
+      ${Object.entries(TGROUPS).map(([g,n])=>{const rs=S.rates.filter(r=>r.g===g); if(!rs.length) return ''; return `<tr class="grp"><td colspan="${VEH.length+4}">${icon(n[2],15)} ${T(n[0],n[1])}</td></tr>`+rs.map(r=>`<tr><td><input data-rate="${r.id}:ar" type="text" dir="rtl" value="${esc(r.ar)}" aria-label="AR"></td><td><input data-rate="${r.id}:en" type="text" dir="ltr" value="${esc(r.en)}" aria-label="EN">${r.check?`<span class="flag">${T('check','مراجعة')}</span>`:''}${r.sample?`<span class="flag">${T('sample','تجريبي')}</span>`:''}</td><td class="w-s">${sel(`data-rate="${r.id}:kind"`,[['transfer',T('One way','ذهاب')],['day',T('Return incl.','شامل العودة')]],r.kind,T('Type','النوع'))}</td>${VEH.map(v=>`<td class="w-n"><input data-rate="${r.id}:p.${v}" type="number" min="0" step="5" value="${esc(r.p[v]||0)}" aria-label="${vName(v)}"></td>`).join('')}<td><button class="x" type="button" data-act="rate-del" data-id="${r.id}" aria-label="×">×</button></td></tr>`).join('');}).join('')}
+      </tbody></table></div><div class="row" style="margin-top:10px"><button class="btn small" type="button" data-act="rate-add">+ ${T('Add service','إضافة خدمة')}</button></div>`;
+  } else {
+    const d=LISTS[cat], rows=S.lists[cat];
+    const cell=(r,[f,type])=>{const a=`data-l="${cat}:${r.id}:${f}"`, lab=esc(T(COL[f][0],COL[f][1]));
+      if(type==='num'||type==='pct') return `<td class="w-n"><input ${a} type="number" min="0" step="any" value="${esc(r[f]??0)}" aria-label="${lab}"></td>`;
+      if(type==='cur') return `<td class="w-c">${sel(a,CURS.map(c=>[c,c]),r[f],lab)}</td>`;
+      if(type==='city') return `<td>${sel(a,Object.keys(CITIES).map(c=>[c,cityN(c)]),r[f],lab)}</td>`;
+      if(type==='plang') return `<td class="w-s">${sel(a,Object.keys(PLANGS).map(k=>[k,plangN(k)]),r[f],lab)}</td>`;
+      if(type==='sel') return `<td class="w-s">${sel(a,Object.keys(OPTS[f]).map(k=>[k,optN(f,k)]),r[f],lab)}</td>`;
+      if(type==='chk') return `<td style="text-align:center"><input ${a} type="checkbox"${r[f]?' checked':''} aria-label="${lab}"></td>`;
+      return `<td><input ${a} type="text" value="${esc(r[f]??'')}" aria-label="${lab}"></td>`;};
+    body=`<p class="help" style="margin-top:0"><b>${T(d.unit[0],d.unit[1])}</b>. ${T('Each price has its own currency. “High season +%” raises it on high-season dates (set in Settings).','كل سعر له عملته. «زيادة الذروة %» ترفعه في تواريخ الذروة (من الإعدادات).')}</p>
+      <div class="scroll"><table class="ltbl"><thead><tr>${d.cols.map(([f])=>`<th>${T(COL[f][0],COL[f][1])}</th>`).join('')}<th></th></tr></thead><tbody>
+      ${rows.map(r=>`<tr>${d.cols.map(c=>cell(r,c)).join('')}<td style="white-space:nowrap">${r.paper?`<span class="flag" style="background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)">${T('from paper','من الورق')}</span>`:r.sample?`<span class="flag">${T('sample','تجريبي')}</span>`:''}<button class="x" type="button" data-act="lrow-del" data-v="${r.id}" aria-label="×">×</button></td></tr>`).join('')}
+      </tbody></table></div><div class="row" style="margin-top:10px"><button class="btn small" type="button" data-act="lrow-add">+ ${T('Add row','إضافة سطر')}</button></div>`;
+  }
+  $('#view').innerHTML=`<div class="card">${tabs}${body}</div>`;
+}
+
+/* ============ settings ============ */
+function renderSettings(){
+  const s=S.set, inp=(path,val,w,step)=>`<input data-s="${path}" type="number" min="0" step="${step||'any'}" value="${esc(val)}" style="width:${w||'5.5rem'}" aria-label="${esc(path)}">`;
+  $('#view').innerHTML=`<div class="sets">
+    <div class="card sect"><h3>💰 ${T('Profit & rounding','الربح والتقريب')}</h3>
+      <div class="row"><span class="lbl" style="margin:0">${T('Default for new programs','الافتراضي للبرامج الجديدة')}</span>${segB('sset','profitMode',[['pct','%'],['fixed',T('fixed per person','ثابت للفرد')]],s.profitMode)} ${inp('profit',s.profit)}</div>
+      <div class="row"><span class="lbl" style="margin:0">${T('This program','هذا البرنامج')}</span>${segB('pset','profitMode',[['pct','%'],['fixed',T('fixed per person','ثابت للفرد')]],P().profitMode)}<input data-p="profit" type="number" min="0" step="any" value="${esc(P().profit)}" style="width:5.5rem" aria-label="profit"></div>
+      <div class="row"><span class="lbl" style="margin:0">${T('Round prices up to the nearest','تقريب السعر لأعلى لأقرب')}</span>${segB('sset','round',[['1','1'],['5','5'],['10','10']],s.round)}</div></div>
+    <div class="card sect"><h3>🧒 ${T('Children prices by age','أسعار الأطفال حسب السن')}</h3>
+      ${s.bands.map((b,i)=>`<div class="row"><span class="lbl" style="margin:0">${T('Up to age','حتى سن')}</span>${inp(`bands.${i}.to`,b.to,'4.5rem')}<span>→</span>${inp(`bands.${i}.pct`,b.pct,'4.5rem')}<span>% ${T('of the adult price','من سعر الكبير')}</span></div>`).join('')}
+      <div class="help">${T('Older children pay the adult price.','الأكبر يدفع سعر الكبير.')}</div></div>
+    <div class="card sect"><h3>🔥 ${T('High seasons','مواسم الذروة')}</h3>
+      ${s.seasons.map((x,i)=>`<div class="row"><input data-s="seasons.${i}.name" type="text" value="${esc(x.name)}" style="width:11rem" aria-label="${T('Season','الموسم')}"><input data-s="seasons.${i}.from" type="text" value="${esc(x.from)}" placeholder="MM-DD" style="width:4.8rem" dir="ltr" aria-label="${T('From','من')}"><span>→</span><input data-s="seasons.${i}.to" type="text" value="${esc(x.to)}" placeholder="MM-DD" style="width:4.8rem" dir="ltr" aria-label="${T('To','إلى')}"><button class="x" type="button" data-act="season-del" data-v="${i}" aria-label="×">×</button></div>`).join('')}
+      <button class="btn small" type="button" data-act="season-add">+ ${T('Add season','إضافة موسم')}</button>
+      <div class="row"><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-s="gala.on"${s.gala.on?' checked':''}> 🎉 ${T('Gala Dinner on 31 Dec, per person','Gala Dinner ليلة 31 ديسمبر للفرد')}</label>${inp('gala.amt',s.gala.amt)}${sel('data-s="gala.cur"',CURS.map(c=>[c,c]),s.gala.cur,'')}</div></div>
+    <div class="card sect"><h3>🚌 ${T('Transport rules','قواعد النقل')}</h3>
+      <div class="row">${segB('sset','policy',[['fewest',T('Fewest vehicles','أقل عدد عربيات')],['cheapest',T('Cheapest','الأرخص')]],s.policy)}</div>
+      <div class="row"><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-s="vatOn"${s.vatOn?' checked':''}> ${T('VAT on transport','ضريبة على النقل')}</label>${inp('vat',s.vat,'4.5rem')}%</div>
+      <div class="row"><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-s="driverTips"${s.driverTips?' checked':''}> ${T('Add driver tips (اكراميات) to the cost','إضافة إكراميات السواقين للتكلفة')}</label></div>
+      <div class="row"><span class="lbl" style="margin:0">${T('Extra seats for guide & rep','كراسي المرشد والمندوب')}</span>${inp('staff',s.staff,'4.5rem',1)}</div></div>
+    <div class="card sect"><h3>💧 ${T('Water & small expenses','المياه والمصاريف الصغيرة')}</h3>
+      <div class="row"><span class="lbl" style="margin:0">${T('Water per person per day','مياه للفرد في اليوم')}</span>${inp('water.amt',s.water.amt)}${sel('data-s="water.cur"',CURS.map(c=>[c,c]),s.water.cur,'')}</div>
+      <div class="row"><span class="lbl" style="margin:0">${T('Extra % (bank fees, small costs)','نسبة إضافية (مصاريف بنكية…)')}</span>${inp('miscPct',s.miscPct,'4.5rem')}%</div>
+      <div class="row"><span class="lbl" style="margin:0">🎁 ${T('Default: 1 free place every','افتراضي: مكان مجاني لكل')}</span>${inp('focEvery',s.focEvery,'4.5rem',1)}</div></div>
+    <div class="card sect"><h3>🧾 ${T('Deposit','العربون')}</h3>
+      <div class="row">${inp('deposit',s.deposit,'4.5rem')}% · ${T('due','قبل الوصول بـ')} ${inp('depositDays',s.depositDays,'4.5rem',1)} ${T('days before arrival','يوم')}</div></div>
+    <div class="card sect"><h3>↩️ ${T('Start over','البدء من جديد')}</h3><p class="help" style="margin:0">${T('Puts back all sample prices and settings. Saved files are deleted too.','يرجع كل الأسعار والإعدادات التجريبية. الملفات المحفوظة تتحذف كمان.')}</p><button class="btn danger" type="button" data-act="reset">${S.ui.resetArm?T('Click again to confirm','اضغط تاني للتأكيد'):T('Reset everything','إعادة ضبط كل شيء')}</button></div>
+  </div>`;
+}
+
+/* ============ editing ============ */
+function setPath(obj,path,val){const k=path.split('.');let o=obj;for(let i=0;i<k.length-1;i++) o=o[k[i]];o[k[k.length-1]]=val;}
+function onInput(e){
+  const el=e.target, d=el.dataset; if(!el.matches||!el.matches('input,select,textarea')) return;
+  const isChk=el.type==='checkbox', commit=isChk||el.tagName==='SELECT'||el.type==='date';
+  if(e.type==='input'&&commit) return; if(e.type==='change'&&!commit) return;
+  const val=isChk?el.checked:(el.type==='number'?num(el.value):el.value); const p=P();
+  if(d.fx){S.fx[d.fx]=val; S.fxDate=todayIso();}
+  else if(d.p){
+    if(d.p==='ndays'){setDays(Math.max(1,Math.round(val))); save(); renderStep(); refresh(); return;}
+    p[d.p]=(d.p==='adults'||d.p==='focEvery')?Math.max(0,Math.round(val)):val;
+    if(d.p==='start'||d.p==='nat'||d.p==='arrCity'){ if(d.p==='arrCity'&&p.days[0]) p.days[0].city=val; save(); renderStep(); refresh(); return;}
+    if(d.p==='adults'&&S.ui.focus&&!tierList().includes(S.ui.focus)) S.ui.focus=null; }
+  else if(d.room){p.rooms[d.room]=Math.max(0,Math.round(val));}
+  else if(d.kid){const k=p.children.find(x=>x.id===d.kid); if(k) k.age=val;}
+  else if(d.day){const [id,f]=d.day.split(':'), day=p.days.find(x=>x.id===id); if(!day) return; day[f]=val;
+    if(f==='city') S.lists.tickets.filter(t=>t.auto&&t.city===val).forEach(t=>{if(!day.tix.includes(t.id)) day.tix.push(t.id);});
+    if(el.tagName==='SELECT'){save(); renderStep(); refresh(); return;}}
+  else if(d.trmode){const [did,tid]=d.trmode.split(':'), day=p.days.find(x=>x.id===did), t=day&&day.trans.find(x=>x.id===tid); if(t) t.mode=val;}
+  else if(d.tradd!==undefined){ if(!val) return; const day=p.days.find(x=>x.id===d.tradd); if(day) day.trans.push(trn(val)); save(); renderStep(); refresh(); return;}
+  else if(d.stay){const [id,f]=d.stay.split(':'), s=p.stays.find(x=>x.id===id); if(!s) return; s[f]=f==='nights'?Math.max(0,Math.round(val)):val;
+    if(f==='a'&&s.type==='cruise'){const r=L('cruises',val); if(r) s.nights=num(r.nights);}
+    if(el.tagName==='SELECT'){save(); renderStep(); refresh(); return;}}
+  else if(d.l){const [cat,id,f]=d.l.split(':'), r=(S.lists[cat]||[]).find(x=>x.id===id); if(r){r[f]=val; r.sample=false;}}
+  else if(d.rate){const [id,f]=d.rate.split(':'), r=rateById(id); if(r){ if(f.startsWith('p.')) r.p[f.slice(2)]=val; else r[f]=val; r.sample=false;}}
+  else if(d.cap){S.caps[d.cap]=val;}
+  else if(d.s){setPath(S.set,d.s,val);}
+  else return;
+  save(); if(viewName()==='program') refresh();
+}
+document.addEventListener('input',onInput); document.addEventListener('change',onInput);
+function setDays(n){const p=P(); while(p.days.length<n){const prev=p.days[p.days.length-1]; p.days.push(mkDay(prev?prev.city:p.arrCity));} if(p.days.length>n) p.days.length=n;}
+function applyTpl(id){const p=P(); p.hide=[]; if(id==='blank'){p.days=[mkDay(p.arrCity,{title:T('Arrival','الوصول')})]; p.stays=[]; p.tpl='blank'; return;} const t=TEMPLATES.find(x=>x.id===id); if(t){t.build(p); p.tpl=id;}}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&e.target.id&&e.target.id.startsWith('add-')){e.preventDefault(); const b=document.querySelector(`[data-act="add-line"][data-v="${e.target.id.slice(4)}"]`); if(b) b.click();}
+  if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('day-h')){e.preventDefault(); e.target.click();}
+});
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]'); if(!b) return;
+  if(b.classList.contains('day-h')&&e.target.closest('.day-acts')) return;
+  const a=b.dataset.act, id=b.dataset.id, v=b.dataset.v, k=b.dataset.k, dd=num(b.dataset.d), p=P();
+  const day=()=>p.days.find(x=>x.id===id);
+  const mv=(arr,i,dlt)=>{const j=i+dlt; if(i<0||j<0||j>=arr.length) return; [arr[i],arr[j]]=[arr[j],arr[i]];};
+  switch(a){
+    case 'lang': S.ui.lang=v; save(); renderShell(); break;
+    case 'hide-sample': S.ui.sample=false; save(); renderShell(); break;
+    case 'step': S.ui.step=num(v); save(); if(viewName()!=='program'){location.hash='program';} else {renderStepbar(); renderStep(); renderPanel(); const sb=$('#stepbar'); if(sb&&sb.getBoundingClientRect().top<0) window.scrollTo({top:window.scrollY+sb.getBoundingClientRect().top-8,behavior:reduceMotion()?'auto':'smooth'});} break;
+    case 'tpl': applyTpl(v); S.ui.open=null; save(); S.ui.step=v==='blank'?1:4; renderProgram(); break;
+    case 'pset': p[k]=(k==='plang'||k==='cur'||k==='status'||k==='profitMode')?v:+v; save(); if(viewName()==='settings'){renderSettings(); break;} renderStep(); refresh(); break;
+    case 'sset': S.set[k]=isNaN(+v)?v:+v; save(); renderSettings(); break;
+    case 'ui': S.ui[k]=v; save(); renderStep(); break;
+    case 'inc': { const inp=b.parentElement.querySelector('input'); inp.value=Math.max(0,num(inp.value)+dd); inp.dispatchEvent(new Event('input',{bubbles:true})); if(inp.dataset.stay&&viewName()==='program'){renderStep();} break; }
+    case 'auto-rooms': {const n=num(p.adults); p.rooms={sgl:n%2,dbl:Math.floor(n/2),tpl:0}; save(); renderStep(); refresh(); break;}
+    case 'kid-add': p.children.push({id:uid(),age:6}); save(); renderStep(); refresh(); break;
+    case 'kid-del': p.children=p.children.filter(x=>x.id!==id); save(); renderStep(); refresh(); break;
+    case 'tier-add': if(!p.tiers.includes(num(v))) p.tiers.push(num(v)); save(); renderStep(); refresh(); break;
+    case 'tier-del': p.tiers=p.tiers.filter(n=>n!==num(v)); save(); renderStep(); refresh(); break;
+    case 'focus': S.ui.focus=num(v); save(); renderPanel(); break;
+    case 'day-open': S.ui.open=S.ui.open===id?null:id; save(); renderStep(); { const el=document.getElementById('day-'+id); if(el&&S.ui.open) el.scrollIntoView({block:'nearest'}); } break;
+    case 'day-add': { const prev=p.days[p.days.length-1]; const d=mkDay(prev?prev.city:p.arrCity); p.days.push(d); S.ui.open=d.id; save(); renderStep(); refresh(); break; }
+    case 'day-copy': { const i=p.days.findIndex(x=>x.id===id); const c=clone(p.days[i]); c.id=uid(); c.trans.forEach(t=>t.id=uid()); p.days.splice(i+1,0,c); S.ui.open=c.id; save(); renderStep(); refresh(); break; }
+    case 'day-move': { const i=p.days.findIndex(x=>x.id===id); mv(p.days,i,dd); save(); renderStep(); refresh(); break; }
+    case 'day-del': p.days=p.days.filter(x=>x.id!==id); save(); renderStep(); refresh(); break;
+    case 'day-tog': { const d=day(); if(!d) break; const arr=d[k]; const i=arr.indexOf(v); if(i>=0) arr.splice(i,1); else arr.push(v); save(); renderStep(); refresh(); break; }
+    case 'day-set': { const d=day(); if(d) d[k]=v; save(); renderStep(); refresh(); break; }
+    case 'tr-ret': { const d=p.days.find(x=>x.id===b.dataset.day), t=d&&d.trans.find(x=>x.id===k); if(t) t.ret=v==='1'; save(); renderStep(); refresh(); break; }
+    case 'tr-del': { const d=day(); if(d) d.trans=d.trans.filter(x=>x.id!==v); save(); renderStep(); refresh(); break; }
+    case 'stay-add': { const last=p.stays[p.stays.length-1]; p.stays.push(mkStay(v,{city:(last&&last.city)||p.arrCity,nights:1,label:v==='none'?T('Night on the sleeper train','ليلة في قطار النوم'):''})); save(); renderStep(); refresh(); break; }
+    case 'stay-move': { const i=p.stays.findIndex(x=>x.id===id); mv(p.stays,i,dd); save(); renderStep(); refresh(); break; }
+    case 'stay-del': p.stays=p.stays.filter(x=>x.id!==id); save(); renderStep(); refresh(); break;
+    case 'hide': { const i=p.hide.indexOf(v); if(i>=0) p.hide.splice(i,1); else p.hide.push(v); save(); renderStep(); break; }
+    case 'add-line': { const inp=$('#add-'+v); const t=inp&&inp.value.trim(); if(!t) break; (v==='in'?p.extraIn:p.extraEx).push(t); save(); renderStep(); break; }
+    case 'save-file': { p.saved=todayIso(); const m=RES.main; const snap=clone(p); snap.sum=m?{v:m.cat.a.sellD/rateOf(p.cur),c:p.cur}:null; const i=S.files.findIndex(x=>x.id===p.id); if(i>=0) S.files[i]=snap; else S.files.push(snap); save(); renderStep(); renderStepbar(); const n=$('#saved-note'); if(n) n.textContent='💾 '+T('Saved to Files.','تم الحفظ في الملفات.'); break; }
+    case 'new-prog': S.prog=blankProg(); S.ui.step=1; S.ui.open=null; S.ui.focus=null; lastBig=null; save(); if(viewName()==='program') renderView(); else location.hash='program'; break;
+    case 'file-open': { const f=S.files.find(x=>x.id===id); if(f){S.prog=clone(f); delete S.prog.sum; S.ui.step=7; S.ui.focus=null; lastBig=null; save(); location.hash='program';} break; }
+    case 'file-dup': { const f=S.files.find(x=>x.id===id); if(f){S.prog=clone(f); delete S.prog.sum; S.prog.id=uid(); S.prog.fileNo=nextFileNo(); S.prog.saved=null; S.prog.status='quote'; S.ui.step=1; lastBig=null; save(); location.hash='program';} break; }
+    case 'file-del': if(S.ui.delArm!==id){S.ui.delArm=id; renderFiles(); setTimeout(()=>{if(S.ui.delArm===id){S.ui.delArm=null; if(viewName()==='files') renderFiles();}},4000); break;} S.files=S.files.filter(x=>x.id!==id); S.ui.delArm=null; save(); renderFiles(); break;
+    case 'list': S.ui.list=v; save(); renderLists(); break;
+    case 'lrow-add': { const cat=S.ui.list, d=LISTS[cat], r={id:uid()}; d.cols.forEach(([f,t])=>r[f]=t==='num'||t==='pct'?0:t==='cur'?((cat==='hotels'||cat==='cruises'||cat==='flights'||cat==='nats')?'USD':'EGP'):t==='city'?'cai':t==='plang'?'it':t==='sel'?Object.keys(OPTS[f])[0]:t==='chk'?false:''); S.lists[cat].push(r); save(); renderLists(); break; }
+    case 'lrow-del': S.lists[S.ui.list]=S.lists[S.ui.list].filter(r=>r.id!==v); save(); renderLists(); break;
+    case 'rate-add': S.rates.push({id:uid(),g:'extra',kind:'transfer',ar:'',en:T('New service','خدمة جديدة'),tip:'day',p:{limo:0,hiace:0,coaster:0,bus:0,jeep:0}}); save(); renderLists(); break;
+    case 'rate-del': S.rates=S.rates.filter(r=>r.id!==id); save(); renderLists(); break;
+    case 'season-add': S.set.seasons.push({name:T('New season','موسم جديد'),from:'07-01',to:'08-31'}); save(); renderSettings(); break;
+    case 'season-del': S.set.seasons.splice(num(v),1); save(); renderSettings(); break;
+    case 'reset': if(!S.ui.resetArm){S.ui.resetArm=true; renderSettings(); setTimeout(()=>{if(S.ui.resetArm){S.ui.resetArm=false; if(viewName()==='settings') renderSettings();}},4000); break;} { const lg=S.ui.lang; try{localStorage.removeItem(KEY);}catch(err){} S=load(); S.ui.lang=lg; lastBig=null; save(); renderShell(); } break;
+    case 'to-panel': $('#panel').scrollIntoView({behavior:reduceMotion()?'auto':'smooth',block:'start'}); break;
+    case 'copy': { const text=waText(), box=$('#copybox'), toast=$('#toast'); box.dir=isAr()?'rtl':'ltr';
+      const fb=()=>{box.hidden=false; box.value=text; box.focus(); box.select(); toast.textContent=T('Copy the text below','النص بالأسفل جاهز للنسخ');};
+      try{navigator.clipboard.writeText(text).then(()=>{toast.textContent=T('Copied — paste in WhatsApp','تم النسخ — الصقه في واتساب'); box.hidden=true; setTimeout(()=>toast.textContent='',3000);},fb);}catch(err){fb();} break; }
+  }
+});
+window.addEventListener('hashchange',renderView);
+renderShell();
+window.__app={S:()=>S,compute,calcTier,totals,RES:()=>RES};
+})();
+</script>
