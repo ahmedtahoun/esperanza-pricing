@@ -3,7 +3,7 @@
 ## Who and why
 - **Client:** Reem, Esperanza Travel (Egypt). She prices group trips (mostly Italian, Spanish and other European groups) on paper. This app replaces her paper costing sheet.
 - **Owner of this repo:** Ahmed (builds the app for her). Talk to him in plain language; he is not reviewing code line by line.
-- **Stage:** working prototype, validated step by step with Reem. Next: deploy it on a domain so Reem's team can use it, then collect her real prices.
+- **Stage:** working prototype, validated step by step with Reem. Live at https://reem.wheretospot.com (Nov 2026). Next: collect her real prices.
 
 ## What the client asked for (spec PDF, Nov 2026, "مواصفات تطبيق تسعير البرامج")
 The PDF is not in the repo (client document; `*.pdf` is gitignored). Summary:
@@ -22,14 +22,27 @@ Real price sheets for every list (hotels, cruises, flights, train, guides, reps,
 - `tour-costing-ar.html` — generated Arabic-default copy. After every change run `python3 scripts/build-ar.py` and commit both.
 - `index.html` — start page for the hosted site: links to the English and Arabic app.
 - `robots.txt` — keeps the site out of search engines (internal tool).
+- `.cpanel.yml` — cPanel Git deployment: copies only `index.html`, the two app pages and `robots.txt` to the web folder. Add any new web file to its `cp` line.
 
 ## How the app works
-- 7-step wizard: 🧾 Client → 👥 People & rooms → 📅 Dates → 🗓️ Days → 🏨 Hotels & cruise → ✅ Included → 💾 Review & save. Live price panel beside it. Other views by hash: `#files`, `#lists`, `#settings`.
+- 5-step wizard: 🧾 Client → 👥 People & rooms → 📅 Dates & days → 🏨 Hotels & cruise → 💾 Review & save. Live price panel beside it. Other views by hash: `#files`, `#lists`, `#settings`.
+  - Step 3 (Dates & days) = trip bar (arrival date, number of days, `tripSummary()` with dates, nights and high season) + the day cards. Day 1's city is the arrival city (`p.arrCity` follows it). Per-day 🔥 badges show only when the trip is partly in high season (`allPeak()`).
+  - Step 4 (Hotels & cruise) shows a ✨ suggestion (`suggestStays()` / `suggestCard()`) when the nights don't match the days or there are no stays. Night j = city of day j; sleeper-train day → night without hotel; Nile days plus touching Luxor/Aswan days → cruise; a one-day trip between two days in the same city sleeps in that city. Keeps hotels already chosen for the same city. Applied with Undo. Known gap: a day whose city is where the group starts (e.g. "West Bank, drive to Hurghada" set to Luxor) counts that night in the start city.
+  - Step 5 (Review & save) holds the Included / Not included editor as a collapsible card (`ieCard()`, `ieOpen`).
+  - Step numbers changed in Nov 2026 (Dates + Days merged, then Included folded into Review); `load()` maps old saved step numbers (`ui.steps` marker, `STEP_COUNT`).
 - Pricing per person = (shared costs ÷ paying people) + individual costs + room ÷ occupancy + misc % → profit (% or fixed) → round up. FOC: `floor(pax/focEvery)` free people; their costs and a single room go into shared costs. Transport VAT 14%. Vehicles chosen automatically (fewest or cheapest).
 - Key functions: `calcTier(pax)`, `compute()` (sets `RES`), `totals()`, `warnings()`, `inclItems()/exclItems()`, `clientView()`, `internalView()`, `renderPanel()`, `waText()`.
 - Text: every label is `T(english, arabic)`. RTL uses logical CSS properties. Numbers inside Arabic text use `.num`/`<bdi>`; group sizes like `20+1` go through `pl()` so they don't flip.
 - Events: one delegated `input`/`change` handler (`onInput`, `data-*` attributes) and one `click` handler (`data-act`).
-- Storage: browser `localStorage`, key `esperanza-pricing.v4.<lang>`. **Known issue on one domain:** the English and Arabic pages use different keys, so a program saved in one does not show in the other. Before real use, decide on one shared key (with a migration from both old keys) or serve only one page.
+- Storage: browser `localStorage`, one key `esperanza-pricing.v4` shared by the English and Arabic pages (data stays in each browser/device; not shared between team members).
+  - First load merges the old per-page keys `esperanza-pricing.v4.en` / `.v4.ar` (`mergeOld()`): files, custom list rows and transport rows from both; an unsaved program from the other page becomes a draft in Files. Old keys are left as a backup; `esperanza-pricing.migrated` stops Reset from re-importing them.
+  - Display language is per page: `esperanza-pricing.lang.<en|ar>` (`pageLang()`).
+  - A `storage` event listener reloads `S` when the other page/tab saves, so two open tabs don't overwrite each other.
+- UX helpers (Nov 2026):
+  - **Undo:** wrap any destructive edit of the program in `withUndo(message, fn)`; it snapshots `S.prog` and shows the bottom message with ↶ Undo for 7 s (`undoSnap`, `#snack`). Used for deleting a day, stay, transport line, child, and for replacing the program with a ready one.
+  - **Ready programs** ask first when the program already has days (`tplArm`: first tap shows "Tap again to replace…", resets after 5 s).
+  - **Opened day** is grouped: Visits & activities · Transport, guide & rep · Meals · Flight or train. Flight/train selects show only when set or after "+ Domestic flight / + Sleeper train" (`travelOpen`, not saved).
+  - **Phones (≤560px):** exchange rates collapse into the 💱 chip (`fxOpen`), tabs are a 4-column row, "English" shows as "EN", short sample-prices banner. **≤700px:** the step bar becomes "Step N of 5" + a tappable progress bar (`.steps-m`; desktop uses `.steps-full`).
 - Debug handle: `window.__app = {S, compute, calcTier, totals, RES}`.
 
 ## Testing
@@ -37,12 +50,16 @@ Real price sheets for every list (hotels, cruises, flights, train, guides, reps,
 - Check after changes: the cost breakdown adds up to total cost; prices change when a ticket is toggled; no console errors; no horizontal scroll at 375px width in both languages (Arabic is RTL).
 - Reference check from Reem's paper example: about $328 / $311 / $305 per person for her three group sizes (her paper says 328 / 311 / 306; the gap is her per-line rounding).
 
-## Hosting
-- Static site, no server needed. The repo is private, so GitHub Pages needs a paid plan; use Cloudflare Pages, Netlify or Vercel (connect the GitHub repo, no build command, output folder = repo root).
-- The app has no login. Anyone with the link can open it. Before real prices go into the code (`seedLists()`), put the site behind access control (e.g. Cloudflare Access or a Netlify/Vercel password) or keep real prices only in the in-app price lists, which stay in each browser.
+## Hosting (live)
+- **URL:** https://reem.wheretospot.com — Namecheap shared hosting (cPanel, LiteSpeed). Domain registered at Namecheap; the main `wheretospot.com` site is on Wix, so don't touch the domain's other DNS records.
+- **Deploy:** cPanel → Git Version Control clones the repo over HTTPS into `~/repositories/esperanza-pricing`; `.cpanel.yml` copies the site files to `~/reem.wheretospot.com/`. Not automatic: after merging to `main`, Ahmed clicks Manage → Pull or Deploy → **Update from Remote**, then **Deploy HEAD Commit**.
+- **SSL:** cPanel AutoSSL certificate for `reem.wheretospot.com`.
+- **Access control:** cPanel Directory Privacy (password per team member) on the `reem.wheretospot.com` folder. Check it is on before sharing the link.
+- **The GitHub repo is public** (made public so cPanel can clone without SSH keys). Anything committed is visible to anyone, including Reem's real transport sheet in `RATES`. Never commit passwords, keys, client documents, customer names or more of her real prices without asking Ahmed; if real prices must stay private, keep them in the in-app price lists (browser only) or make the repo private again and set up a deploy key.
 - The old claude.ai artifact links belong to Ahmed's personal Claude account; the hosted domain replaces them.
 
 ## Working rules
-- Pull before starting, commit and push when done (Ahmed works from two Claude accounts).
+- Pull before starting, commit and push when done (Ahmed works from two Claude accounts). Changes reach the live site only after merge to `main` and a cPanel deploy; remind Ahmed.
+- Ask Ahmed before anything that costs money or changes DNS.
 - Keep it one HTML file unless the move to a real backend is decided.
 - Don't commit client documents, logos received by email, or real customer names beyond the sample.
