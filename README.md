@@ -10,6 +10,9 @@ This is a **prototype for testing with the client**. It is one HTML file with no
 |---|---|
 | `tour-costing.html` | The whole app (English by default, switchable to Arabic). **Edit this one.** |
 | `tour-costing-ar.html` | Arabic-default copy. Generated: don't edit by hand. |
+| `index.html` | Start page for the hosted site (pick Arabic or English). |
+| `robots.txt` | Keeps the site out of search engines. |
+| `CLAUDE.md` | Project background and rules for Claude sessions. |
 | `scripts/build-ar.py` | Regenerates the Arabic copy from the English file. |
 | `.claude/launch.json` | Local preview server config for Claude Code. |
 
@@ -36,6 +39,10 @@ Commit both HTML files together.
 - **Screens:** `renderShell()` and `renderView()` (by URL hash: `#program`, `#files`, `#lists`, `#settings`), the 7-step wizard, `renderPanel()` (live price), `clientView()` and `internalView()`.
 - **Text:** every label is `T(english, arabic)`. RTL layout uses logical CSS properties.
 - **Events:** one delegated `input`/`change` handler (`onInput`, `data-*` attributes) and one `click` handler (`data-act`).
+
+## Hosting
+
+It's a static site: connect this repo to Cloudflare Pages, Netlify or Vercel with no build command and the repo root as the output folder. The app has no login, so add access control before real prices go into the code. See `CLAUDE.md`.
 
 ## Price data
 
